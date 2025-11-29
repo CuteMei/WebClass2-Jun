@@ -3,6 +3,7 @@ var app = express();
 var session = require('express-session');
 var conn = require('./dbConfig'); //const { error } = require('console');
 const { title } = require('process');
+
 app.set('view engine','ejs');
 app.use(session({
     secret: 'yoursecret',
@@ -16,6 +17,14 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/', function(req, res){
     res.render("home");
+});
+
+app.get('/service', function(req, res){
+    res.render("service");
+});
+
+app.get('/faqs', function(req, res){
+    res.render("faqs");
 });
 
 app.get('/login', function(req, res) {
@@ -81,14 +90,6 @@ app.get('/listMPs', function(req, res){
         console.log(result);
         res.render('listMPs', { title: 'List of NZ MPs', MPsData: result});
     });    
-});
-
-app.get('/service', function(req, res){
-    res.render("service");
-});
-
-app.get('/faqs', function(req, res){
-    res.render("faqs");
 });
 
 app.get('/logout', (req,res) => {
