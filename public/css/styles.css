@@ -1,8 +1,10 @@
 h1 {color: black;}
-h2 {color: green;}
+h2 {color: navy;}
 h4 {color: purple;}
 p {color: #000;}
-
+body {
+    background-image: url('/public/images/BlueSky1.jpg');
+}
 .img2 { 
 float: right; 
 max-width: 400px; 
