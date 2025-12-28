@@ -27,6 +27,10 @@ app.get('/faqs', function(req, res){
     res.render("faqs");
 });
 
+app.get('/contact', function(req, res){
+    res.render("contact");
+});
+
 app.get('/login', function(req, res) {
     res.render("login.ejs");
 });
@@ -35,20 +39,46 @@ app.post('/auth', function(req, res) {
     let name = req.body.username;
     let password = req.body.password;
     if (name && password) {
-        conn.query('SELECT * FROM users WHERE name = ? AND password = ?', [name, password],
+        conn.query('SELECT * FROM admin WHERE name = ? AND password = ?', [name, password],
             function (error, results, fields) {
                 if (error) throw error;
                 if (results.length >0) {
                     req.session.loggedin = true;
                     req.session.username = name;
-                    res.redirect('/membersOnly');
+                    res.redirect('/booking');
                 } else {
                     res.send('Incorrect Username and/or Password!');
                 }
                 res.end();
             });
     } else {
-        res.send('Please enter Username and Password!');
+        res.send('Please enter AdminName and Password please!');
+        res.end();
+    }
+})
+
+app.get('/adminlogin', function(req, res) {
+    res.render("adminlogin.ejs");
+});
+
+app.post('/auth', function(req, res) {
+    let name = req.body.username;
+    let password = req.body.password;
+    if (name && password) {
+        conn.query('SELECT * FROM admin WHERE name = ? AND password = ?', [name, password],
+            function (error, results, fields) {
+                if (error) throw error;
+                if (results.length >0) {
+                    req.session.loggedin = true;
+                    req.session.username = name;
+                    res.redirect('/booking');
+                } else {
+                    res.send('Incorrect Username and/or Password!');
+                }
+                res.end();
+            });
+    } else {
+        res.send('Please enter Full Name and Phone Number please!');
         res.end();
     }
 })
@@ -72,15 +102,15 @@ app.get('/addMps', function (req, res, next) {
     }
 });
 // Users can access this only if they are logged in
-app.post('/addMPs', function (req, res, next) {
+app.post('/booking', function (req, res, next) {
     var id = req.body.id;
     var name = req.body.name;
     var party = req.body.party;
-    var sql = `INSERT INTO mps (id, name, party) VALUES ("${id}", "${name}", "${party}")`;    
+    var sql = `INSERT INTO booking (id, name, date, time) VALUES ("${id}", "${name}", "${date}", "${time})`;    
     conn.query(sql, function(err, result) {
         if (err) throw err;
         console.log('record inserted');
-        res.render('addMPs');
+        res.render('booking');
     }); //console.log(result);
 });
 
@@ -98,4 +128,4 @@ app.get('/logout', (req,res) => {
 });
 
 app.listen(3000);
-console.log('Node app is running on port 3001 MQ')
+console.log('Node app is running on port 3000 MQ')

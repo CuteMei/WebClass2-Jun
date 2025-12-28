@@ -4,7 +4,7 @@ var conn = mysql.createConnection({
     port: 3307, // add port
     user: 'root',
     password: '',
-    database: 'webclass2db'
+    database: 'junbooking2db'
 });
 conn.connect(function(err) {
     if (err) throw err;

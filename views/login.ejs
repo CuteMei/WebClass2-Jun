@@ -1,21 +1,30 @@
 <html>
     <head>
+        <title>JHH login-page</title>
         <%- include('partials/header1.ejs') %>
+        <h6>***Jun Healthcare House Copyrights 2026***</h6>
     </head>
     <body>
         <%- include('partials/navbar1.ejs') %>
-        <div>
-            <h1>Login / Register</h1>
+        <div class="container">
+            <br><h1><strong>Login / Register</strong></h1><br>
             <br>
             <form action="/auth" method="post">
-                <input type="text" name="username" placeholder="User Name" id="username" required>
-                <label for="password">
-                </label>
-                <input type="password" name="password" placeholder="Password" id="password" required>
-                <input type="submit" value="Login">
+                <input type="text" name="username" placeholder="User Full Name" id="username" required>
+                <label for="password"></label>
+                <input type="phonenumber" name="phonenumber" placeholder="Phone Number" id="phonenumber" required>
+                <input type="submit" value="Sumit">
             </form>
             <br>
             <h4><a href="register">Register</a></h4>
+            <br>
+            <form action="/auth" method="post">
+                <input type="text" name="username" placeholder="User Full Name" id="username" required>
+                <label for="password"></label>
+                <input type="phonenumber" name="phonenumber" placeholder="Phone Number" id="phonenumber" required>
+                <input type="submit" value="Sumit">
+            </form>
+            <br>
         </div>
     </body>
 </html>
