@@ -4,10 +4,15 @@ h4 {color: purple;}
 p {color: #000;}
 body {
     background-image: url('/public/images/BlueSky6.jpg');
+    
 }
 .img2 { 
 float: right; 
-max-width: 400px; 
-margin-left: 50px; 
-border-radius: 200px;
+max-width: 300px; 
+margin-right: 0px; 
+border-radius: 200px;}
+
+.img1 { 
+float: left; 
+max-width: 700px; 
 } 

@@ -27,10 +27,6 @@ app.get('/faqs', function(req, res){
     res.render("faqs");
 });
 
-app.get('/contact', function(req, res){
-    res.render("contact");
-});
-
 app.get('/login', function(req, res) {
     res.render("login.ejs");
 });
@@ -57,8 +53,8 @@ app.post('/auth', function(req, res) {
     }
 })
 
-app.get('/adminlogin', function(req, res) {
-    res.render("adminlogin.ejs");
+app.get('/register', function(req, res) {
+    res.render("register.ejs");
 });
 
 app.post('/auth', function(req, res) {
