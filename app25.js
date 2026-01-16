@@ -27,22 +27,6 @@ app.get('/faqs', function(req, res){
     res.render("faqs");
 });
 
-app.get('/register', function(req, res) {
-    res.render("register.ejs");
-});
-
-app.post('/register', function (req, res, next) {
-    //var id = req.body.id;
-    let name = req.body.name;
-    let password = req.body.password;
-    let sql = `INSERT INTO users (name, password) VALUES ("${name}", "${password}")`;    
-    conn.query(sql, function(err, result) {
-        if (err) throw err;
-        console.log('record inserted');
-        res.render('register');
-    }); //console.log(result);
-});
-
 app.get('/login', function(req, res) {
     res.render("login.ejs");
 });
@@ -57,15 +41,14 @@ app.post('/auth', function(req, res) {
                 if (results.length >0) {
                     req.session.loggedin = true;
                     req.session.name = name;
-                    //req.session.username = name;
                     res.redirect('/membersOnly');
                 } else {
-                    res.send('Incorrect Name and/or Password!');
+                    res.send('Incorrect Username and/or Password!');
                 }
                 res.end();
             });
     } else {
-        res.send('Please enter Name and Password please!');
+        res.send('Please enter Username and Password!');
         res.end();
     }
 })
@@ -81,7 +64,7 @@ app.get('/membersOnly', function (req, res, next) {
 });
 
 // Users can access this if they are logged in
-app.get('/addMPS', function (req, res, next) {
+app.get('/addMps', function (req, res, next) {
     if (req.session.loggedin) {
         res.render('addMPs');
     }
@@ -95,27 +78,19 @@ app.post('/addMPs', function (req, res, next) {
     var id = req.body.id;
     var name = req.body.name;
     var party = req.body.party;
-    var sql = `INSERT INTO booking (id, name, date, time) VALUES ("${id}", "${name}", "${date}", "${time})`;    
+    var sql = `INSERT INTO mps (id, name, party) VALUES ("${id}", "${name}", "${party}")`;    
     conn.query(sql, function(err, result) {
         if (err) throw err;
         console.log('record inserted');
-        res.render('booking');
+        res.render('addMPs');
     }); //console.log(result);
 });
 
-app.get('/listBooking', function(req, res){
-    conn.query('SELECT * FROM booking', function (err, result) {
+app.get('/listMPs', function(req, res){
+    conn.query('SELECT * FROM mps', function (err, result) {
         if (err) throw err;
         console.log(result);
-        res.render('listBooking', { title: 'List of Booking', bookingData: result});
-    });    
-});
-
-app.get('/listContacts', function(req, res){
-    conn.query('SELECT * FROM contacts', function (err, result) {
-        if (err) throw err;
-        console.log(result);
-        res.render('listContacts', { title: 'List of Contacts', contactsData: result});
+        res.render('listMPs', { title: 'List of NZ MPs', MPsData: result});
     });    
 });
 

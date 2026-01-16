@@ -1,28 +1,33 @@
 <html>
     <head>
-        <title>JHH login-page</title>
+        <title>JHH login-page A</title>
         <%- include('partials/header1.ejs') %>
-        <h6>***Jun Healthcare House Copyrights 2026***</h6>
+        <i>***Jun Healthcare House Copyrights 2026***</i>
     </head>
     <body>
         <%- include('partials/navbar1.ejs') %>
         <div class="container">
-            <br><h1><strong>Login</strong></h1><br>
-            <br>
+            <br><h1><strong>Login A</strong></h1>
             <form action="/auth" method="post">
-                <input type="text" name="username" placeholder="User Full Name" id="username" required>
-                <label for="password"></label>
-                <input type="phonenumber" name="phonenumber" placeholder="Phone Number" id="phonenumber" required>
-                <input type="submit" value="Sumit">
+                <select name="role" required>
+                    <option value="">--Select Role--</option>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <input type="text" name="name" placeholder="Name" required />
+                <input type="password" name="password" placeholder="Password" required />
+                <button type="submit" name="login">Login</button>
+                <p>Don't have an account? 
+                    <a href="addMPs.ejs">Register</a></p>
             </form>
             <br>
             <h4><a href="register"><strong>Register</strong></a></h4>
             <br>
             <form action="/auth" method="post">
-                <input type="text" name="username" placeholder="User Full Name" id="username" required>
-                <label for="password"></label>
-                <input type="phonenumber" name="phonenumber" placeholder="Phone Number" id="phonenumber" required>
-                <input type="submit" value="Sumit">
+                <input type="text" name="name" placeholder="Name" required />
+                <input type="email" name="email" placeholder="Email" required />
+                <input type="password" name="password" placeholder="Password" required />
+                <button type="submit" name="register">Register</button>
             </form>
             <br>
         </div>

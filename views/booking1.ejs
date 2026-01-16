@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <%- include('partials/header1.ejs') %>
+    </head>
+    <body>
+        <%- include('partials/navbar2.ejs') %>
+        <div class="container">
+            <h2>JHH Booking</h2>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+
+                <% if (bookingData.length !=0) {
+                    var i=1; bookingData.forEach( function(data) {
+                %>                
+                <tr>
+                    
+                    <td><%=data.name %></td>
+                    <td><%=data.date %></td>
+                    <td><%=data.time %></td>
+                </tr>                    
+                <% i++; }) %> <%}%>
+            </table>            
+        </div>
+    </body>
+</html>

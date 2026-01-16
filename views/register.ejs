@@ -1,20 +1,20 @@
 <html>
     <head>
+        <title>JHH register-page</title>
         <%- include('partials/header1.ejs') %>
+        <i>***Jun Healthcare House Copyrights 2026***</i>
     </head>
     <body>
         <%- include('partials/navbar1.ejs') %>
-        <div class="container">
-            <h2>Register</h2>
-            <form method="post">
-                <label for="id">MP ID</label>
-                <input type="text" id="id" placeholder="Enter First Name" name="id"><br>
-                <label for="name">MP Name</label>
-                <input type="text" id="name" placeholder="Enter Last Name" name="name"><br>
-                <label for="party">Political Party</label>
-                <input type="text" id="party" placeholder="Enter Phone Number" name="party"><br>
-                <button type="submit">Submit</button>
-            </form>            
+        <div class="container"><br>
+            <h1><strong>Register</strong></h1>
+            <form action="/register" method="post">
+                <input type="text" id="name" placeholder="Enter Name" name="name">
+                <input type="password" id="password" placeholder="Enter Password" name="password">
+                <button type="register">Register</button>
+            </form> 
+            <p>Already have an account? Go to <a href="login">Login</a> please?</p>
+            <h4></h4>           
         </div>
     </body>
 </html>

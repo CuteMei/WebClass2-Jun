@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>JHH listBooking-page</title>
+        <%- include('partials/header1.ejs') %>
+        <i>***Jun Healthcare House Copyrights 2026***</i>
+    </head>
+    <body>
+        <%- include('partials/navbar2.ejs') %>
+        <div class="container">
+            <br><h1><strong>List of Contacts</strong></h1>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                </tr>
+
+                <% if (contactsData.length !=0) {
+                    let i=1; 
+                    contactsData.forEach( function(data) {
+                %>                
+                <tr>
+                    <td><%=data.id %></td>
+                    <td><%=data.name %></td>
+                    <td><%=data.phone %></td>
+                    <td><%=data.email %></td>
+                </tr>                    
+                <% }) }%>
+            </table>            
+        </div>
+    </body>
+</html>
