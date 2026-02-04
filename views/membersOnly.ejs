@@ -1,22 +1,26 @@
 <html>
     <head>
+        <title>JHH booking-page</title>
         <%- include('partials/header1.ejs') %>
     </head>
     <body>
-        <h2 style="color: red">Members only page.</h2>
+        <h6 style="color: rgb(4, 12, 252)"><i>JHH Booking Page</i></h6>
         <%- include('partials/navbar2.ejs') %>
         <p style="color: #00f;">
             Welcome to a Members only page. You are now logged in.
         </p>
-        <p style="color: #7fae5d">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in 
-                reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                pariatur. Excepteur sint occaecat cupidatat non proident, sunt in 
-                culpa qui officia deserunt mollit anim id est laborum.    
-        </p>
+        <div class="container">
+            <h2>Add an MP</h2>
+            <form method="post">
+                <label for="id">MP ID</label>
+                <input type="text" id="id" placeholder="Enter MP ID" name="id">
+                <label for="name">MP Name</label>
+                <input type="text" id="name" placeholder="Enter MP's Name" name="name">
+                <label for="party">Political Party</label>
+                <input type="text" id="party" placeholder="Enter party Name" name="party">
+                <button type="submit">Submit</button>
+            </form>            
+        </div>
     </body><br><br><br>
     <footer>
         <p>&copy; 2026 Jun Healthcare House. All rights reserved.</p>

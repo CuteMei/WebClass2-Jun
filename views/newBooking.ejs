@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <title>JHH New Booking Page</title>
+        <%- include('partials/header1.ejs') %>
+        <!-- Flatpickr CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    </head>
+    <body>
+        <h6 style="color: rgb(4, 12, 252)"><i>JHH Booking Page</i></h6>
+        <%- include('partials/navbar2.ejs') %>
+        <div class="container"><br>
+            <h2>New Booking</h2>
+            <!-- Fixed: display message from backend if it exists -->
+            <% if (message) { %>
+                <p style="color: green;"><%- message %></p>
+            <% } %>
+            <form method="post" id="bookingForm">
+                <input type="text" name="name" placeholder="Enter Name" required />
+                <input type="tel" name="phone" placeholder="Enter Phone Number" required /><br><br>
+                <input type="text" name="date" id="dateInput" placeholder="Select Date" required readonly />
+                <select name="time" id="timeSelected" required>
+                    <option value="" disabled selected>--Select Time--</option>
+                    <option value="09:30">09:30</option>
+                    <option value="11:00">11:00</option>
+			        <option value="13:00">13:00</option>
+			        <option value="14:30">14:30</option>
+			        <option value="16:00">16:00</option>
+                </select>
+                <p id="dateError" style="color: red; display: none"></p><br><br>
+                <button type="submit">Submit</button>
+            </form>  
+            <p id="bookingSuccess" style="color: green; display: none">Booking submitted successfully!</p>          
+        </div>
+    
+        <!-- Flatpickr JS -->
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script>
+            // Calculate min date: 48 hours from now
+            const minDate = new Date();
+            minDate.setHours(minDate.getHours() + 48);
+
+            flatpickr('#dateInput', {
+                minDate: minDate,
+                disable: [
+                    function(date) {
+                    // Block Wednesday (3), Saturday (6), Sunday (0)
+                    return [0, 3, 6].includes(date.getDay());
+                }],
+                dateFormat: 'Y-m-d' // sends date as YYYY-MM-DD to backend
+            });
+        </script>
+    </body><br><br><br>
+    <footer>
+        <p>&copy; 2026 Jun Healthcare House. All rights reserved.</p>
+    </footer>
+</html>
