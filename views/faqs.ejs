@@ -4,33 +4,25 @@
         <%- include('partials/header1.ejs') %>
     </head>
     <body>
-        <h6 style="color: rgb(4, 12, 252)"><i>JHH FAQs Page</i></h6>
-         <%- include('partials/navbar1.ejs') %>
-         <div class="container">
-            <br><h1><strong>FAQs</strong></h1><br>
-            <img class="img2" src="/public/images/XueweiTu.jpg" alt="Lady">
-            <h6><b>Q1.	What is acupuncture? </b></h6>
-            <p>Acupuncture is one of the important treatment methods in traditional Chinese medicine. 
-                Acupuncture stimulates specific acupoints on the body's meridians 
-                to promote the circulation of qi and blood, improve the function of internal organs, 
-                and help restore the body's yin-yang balance.<br></p>
-            <h6><b>Q2.	What are acupuncture points?</b></h6>
-	        <p>Acupoints are specific locations on the meridians of the human body, 
-                and different acupoints have different functions. 
-                Acupuncturists use different techniques to treat various diseases, 
-                and they are particularly effective in relieving pain.<br></p>
-            <h6><b>Q3.	Can acupuncture relieve headaches?</b></h6>
-	        <p>Yes. Headaches can be caused by various reasons, by identifying the correct acupoints, 
-                and using appropriate techniques through traditional Chinese medicine diagnosis, 
-                the treatment effect will be better.<br></p>
-            <h6><b>Q4.	Can acupuncture help alleviate poor sleep?</b></h6>
-	        <p>Yes. Poor sleep can be caused by various reasons, 
-                requiring diagnosis and treatment based on the specific cause.<br></p>
-            <h6><b>Q5. Is acpuncture effective for frozen shoulder?</b></h6>
-	        <p>Yes, acupuncture, massage, and cupping are all very effective 
-                in improving the symptoms of frozen shoulder.<br></p>
-         </div>
-    </body><br><br><br>
+        <%- include('partials/navbar1.ejs') %>
+        <div class="container">
+            <br><h2><strong>FAQs</strong></h2>
+            <img class="img2" src="/public/images/XueweiTu.jpg" alt="Xue Wei Tu">
+            <p>If you would like to know more about our services, please check on 
+                <a href="service">Services</a> page</p>
+            
+            <% if (faqData.length == 0) { %>
+                <p>No FAQs available at the moment.</p>
+            <% } else { %>
+                <% let i = 1;
+                   faqData.forEach(function(faq) { %>
+                    <h6><b>Q<%- i++ %>. <%- faq.question %></b></h6>
+                    <p><%- faq.answer %></p>
+                <% }) %>
+            <% } %>
+        </div>
+    </body>
     <footer>
         <p>&copy; 2026 Jun Healthcare House. All rights reserved.</p>
+    </footer>
 </html>

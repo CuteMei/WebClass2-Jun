@@ -1,13 +1,13 @@
 var express = require('express');
 var app = express();
 var session = require('express-session');
-var conn = require('./dbConfig'); //const { error } = require('console');
-const { title } = require('process');
+var conn = require('./dbConfig');
+//const { title } = require('process');
 var bcrypt = require('bcrypt');
 
 app.set('view engine','ejs');
 app.use(session({
-    secret: 'yoursecret',
+    secret: 'jHh2026SecureRandomString!@#',
     resave: true,
     saveUninitialized: true
 }));
@@ -24,8 +24,19 @@ app.get('/service', function(req, res){
     res.render("service");
 });
 
-app.get('/faqs', function(req, res){
-    res.render("faqs");
+// Static FAQs version for comparison
+app.get('/faqs1', function(req, res){
+    res.render("faqs1");
+});
+// Database-driven FAQs version
+app.get('/faqs', function(req, res) {
+    conn.query('SELECT * FROM faqs ORDER BY id', function(err, results) {
+        if (err) {
+            console.log('Error fetching FAQs:', err);
+            return res.send('Error loading FAQs.');
+        }
+        res.render('faqs', { faqData: results });
+    });
 });
 
 app.get('/register', function(req, res) {
@@ -50,7 +61,7 @@ app.post('/register', function (req, res) {
 
     var hashedPassword = bcrypt.hashSync(password, 10);
     conn.query(
-        `INSERT INTO users (name, password, email) VALUES (?, ?, ?)`, //use parameterized query
+        'INSERT INTO users (name, password, email) VALUES (?, ?, ?)', //use parameterized query
         [name, hashedPassword, email],
         function(err, results, fields) {
             if (err) {
@@ -75,32 +86,40 @@ app.post('/auth', async function(req, res) { //added async
     
     // Add validation for empty fields
     if (!name || !password) {
-        return res.send('Please enter Name and Password please!'); // Fixed: added return to prevent further execution
+        return res.send('Please enter Full Name and Password please!'); 
     }
 
     conn.query('SELECT * FROM users WHERE name = ?', [name],    
         async function (error, results, fields) {
-            if (error) throw error;
+            if (error) {
+                console.log('Error during login:', error);
+                return res.send('An error occurred. Please try again.');
+            }
 
             if (results.length >0) {
-                const ok = await bcrypt.compare(password, results[0].password);// column name 'password' in db
+                const ok = await bcrypt.compare(password, results[0].password);
                 if (ok) {
+                    //Passwords match, set session variables
                     req.session.loggedin = true;
                     req.session.name = name;
                     req.session.role = results[0].role; // Store user role in session
-                    role = results[0].role;
+                    //role = results[0].role;
+
                     //console.log('User logged in:', name, 'Role:', req.session.role);
-                    if (role === 'admin') {
+                    if (results[0].role === 'admin') {
                         res.redirect('/adminPage'); // Redirect to admin dashboard
                     }else {
                         res.redirect('/newBooking'); // Redirect to user dashboard
                     }
-                    res.end();
+                } else {
+                    //passwords incorrect.
+                    res.send('Incorrect Name and/or Password!');
                 }
-        } else {
-            res.send('Incorrect Name and/or Password!');
-        }
-    });
+            } else {
+                //user not found.
+                res.send('Incorrect Name and/or Password!');
+            }
+        });
 })
 
 // Reusable middleware: protects any route that requires login
@@ -130,6 +149,27 @@ app.post('/adminPage', requireLogin, function (req, res, next) {
         }
         console.log('record inserted');
         res.render('adminPage', { message: 'Booking added successfully!' });
+    });
+});
+app.get('/newBookingA', requireLogin, function (req, res) {
+    res.render('newBookingA', { message: null });
+});
+  
+app.post('/newBookingA', requireLogin, function (req, res, next) {
+    var name = req.body.name;
+    var phone = req.body.phone;
+    var date = req.body.date;
+    var time = req.body.time;
+
+    // Fixed: use parameterized query instead of template literal
+    var sql = 'INSERT INTO booking (name, phone, date, time) VALUES (?, ?, ?, ?)';
+    conn.query(sql, [name, phone, date, time], function(err, result) {
+        if (err) {
+            console.log('Error inserting booking:', err);
+            return res.send('Error creating booking.');  // Fixed: don't crash on error
+        }
+        console.log('record inserted');
+        res.render('newBookingA', { message: 'Booking added successfully!' });
     });
 });
 
