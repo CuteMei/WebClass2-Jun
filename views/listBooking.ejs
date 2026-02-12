@@ -4,12 +4,12 @@
         <%- include('partials/header1.ejs') %>
     </head>
     <body>
-        <h1 style="padding-right: 50px;">
-            <img src="/public/images/Logo1.jpg" alt="JHH Logo" style="height: 40px; vertical-align: middle; margin: 10px;">
-            <i>Welcome to Jun Healthcare House </i>--- for ladies only
-            <img src="/public/images/Logo2.jpg" alt="JHH Logo" style="height: 40px; vertical-align: middle; margin: 10px;">
-        </h1>
-        <%- include('partials/navbar2.ejs') %>
+    ---    if role == admin         //those are tutor's notes, haven't trying to use it yet, but will try to implement it in the future
+    ---        <%- include('partials/navbar3.ejs') %>
+     --   else
+    ---        <%- include('partials/navbar2.ejs') %>
+
+        <%- include('partials/navbar3.ejs') %>
         <div class="container">
             <br><h1><strong>List of Booking</strong></h1>
             <% if (bookingData.length == 0) { %>
@@ -17,8 +17,8 @@
             <% } else { %>
             <table>
                 <tr>
-                    <th>No.</th><th>Name</th><th>Email</th>
-                    <th>Phone</th><th>Date</th><th>Time</th>
+                    <th>No.:_</th><th>Full Name:___</th><th>Email:__________</th>
+                    <th>Phone Number:___</th><th>Date:_____________</th><th>Time:___</th>
                     <th></th>
                 </tr>
 

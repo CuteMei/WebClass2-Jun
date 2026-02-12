@@ -6,16 +6,29 @@
     <body>
         <%- include('partials/navbar1.ejs') %>
         <div class="container"><br>
-            <h2><strong>Login</strong></h2>
+            <h1><strong>Login</strong></h1>
+
+            <!-- ADD THESE MESSAGE BLOCKS! -->
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p style="color: red; font-weight: bold;">⚠️ <%= error %></p>
+            <% } %>
+
+            <% if (typeof success !== 'undefined' && success) { %>
+                <p style="color: green; font-weight: bold;">✅ <%= success %></p>
+            <% } %>
+            <!-- END OF MESSAGE BLOCKS -->
+
             <form action="/auth" method="post">
-                <input type="text" name="name" placeholder="Enter Name" required />
+                <input type="email" name="email" placeholder="Enter Email" required /><br><br>
                 <input type="password" name="password" placeholder="Enter Password" required/><br><br>
                 <button type="submit">Login</button>
             </form>
-            
-            <p>Don't have an account? Go to <a href="register">Register</a> first please?</p>
+            <p><b>Don't have an account?</b> Go to <a href="register">Register</a> first please?<br><br>
+                <b>Forgot your password?</b> Contact us at <a href="mailto:JunHealthcareHouse@gmail.com"><br>
+				JunHealthcareHouse@gmail.com</a> to reset it.</p>
+            <p></p>
         </div>
-    </body><br><br><br>
+    </body>
     <footer>
         <p>&copy; 2026 Jun Healthcare House. All rights reserved.</p>
     </footer>

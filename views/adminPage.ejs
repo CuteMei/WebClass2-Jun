@@ -8,14 +8,14 @@
     <body>
         <%- include('partials/navbar3.ejs') %>
         <div class="container"><br>
-            <h2>New Booking</h2>
+            <h2>JHH Admin Page</h2>
+
             <% if (message) { %>
                 <p style="color: green;"><%- message %></p>
             <% } %>
             <form method="post" id="bookingForm">
-                <input type="text" name="name" placeholder="Enter Name" required />
-                <input type="tel" name="phone" placeholder="Enter Phone Number" required />
-                <input type="text" name="date" id="dateInput" placeholder="Select Date" required readonly />
+                <input type="text" name="name" placeholder="Enter Full Name" required /><br><br>
+                <input type="text" name="date" id="dateInput" placeholder="Select Date" required readonly /><br><br>
                 <select name="time" id="timeSelect" required>
                     <option value="" disabled selected>--Select Time--</option>
                     <option value="09:30">09:30</option>
@@ -23,7 +23,7 @@
                     <option value="13:00">13:00</option>
                     <option value="14:30">14:30</option>
                     <option value="16:00">16:00</option>
-                </select>
+                </select><br><br>
                 <button type="submit">Submit</button>
             </form>          
         </div>

@@ -6,22 +6,16 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     </head>
     <body>
-        <h1 style="padding-right: 50px;">
-            <img src="/public/images/Logo1.jpg" alt="JHH Logo" style="height: 40px; vertical-align: middle; margin: 10px;">
-            <i>Welcome to Jun Healthcare House </i>--- for ladies only
-            <img src="/public/images/Logo2.jpg" alt="JHH Logo" style="height: 40px; vertical-align: middle; margin: 10px;">
-        </h1>
         <%- include('partials/navbar2.ejs') %>
         <div class="container"><br>
             <h2>New Booking</h2>
-            <!-- Fixed: display message from backend if it exists -->
+            
             <% if (message) { %>
                 <p style="color: green;"><%- message %></p>
             <% } %>
             <form method="post" id="bookingForm">
-                <input type="text" name="name" placeholder="Enter Full Name" required />
-                <input type="tel" name="phone" placeholder="Enter Phone Number" required /><br><br>
-                <input type="text" name="date" id="dateInput" placeholder="Select Date" required readonly />
+                <input type="text" name="name" placeholder="Enter Full Name" value="<%=name %>" disabled /><br><br>
+                <input type="text" name="date" id="dateInput" placeholder="Select Date" required readonly /><br><br>
                 <select name="time" id="timeSelected" required>
                     <option value="" disabled selected>--Select Time--</option>
                     <option value="09:30">09:30</option>
@@ -32,7 +26,7 @@
                 </select>
                 <p id="dateError" style="color: red; display: none"></p><br><br>
                 <button type="submit">Submit</button>
-            </form>  
+            </form>
             <p id="bookingSuccess" style="color: green; display: none">Booking submitted successfully!</p>          
         </div>
     

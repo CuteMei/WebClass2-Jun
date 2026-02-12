@@ -1,18 +1,21 @@
-h1 {
+h1 {color: black;}
+h2 {color: purple;}
+h4 {
     color: rgb(44, 44, 244);
     text-shadow: 2px 2px 4px #000000;
 }
-h2 {color: black;}
-h4 {color: purple;}
 p {color: #000;}
+
 body {
     background-image: url('/public/images/BlueSky6.jpg');  
 }
+
 .img2 { 
 float: right; 
 max-width: 300px; 
 margin-right: 0px; 
-border-radius: 200px;}
+border-radius: 200px;
+}
 
 .img1 { 
 float: left; 
