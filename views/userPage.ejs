@@ -1,50 +1,41 @@
 <html>
     <head>
-        <title>JHH Admin Page</title>
+        <title>JHH User Page</title>
         <%- include('partials/header1.ejs') %>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     </head>
     <body>
-        <%- include('partials/navbarAdmin.ejs') %>
+        <%- include('partials/navbarUser.ejs') %>
         <div class="container"><br>
-            <h1><strong>Welcome <%=name %> to Admin  Dashboard</strong></h1>
-
-            <% if (message) { %>
-                <p style="color: green;"> <%- message %></p>
-            <% } %>
-
-            <form method="post" action="/adminCreateBooking">
+            <h1><strong>Welcome <%=name %> to book your Appointment</strong></h1><br>
+            
+            
+            <form method="post" action="/userCreateBooking">
+                <label><strong>Your Name:</strong></label>
+                <input type="text" name="name" value="<%= name %>" readonly style="background-color: #f0f0f0;" disabled />
                 
-                <br><label><strong>Select Patient:</strong></label>
-                
-                <select name="user_id" required>
-                    <option value="" disabled selected>--Select Patient--</option>
-                    <% users.forEach(function(user) { %>
-                        <option value="<%= user.user_id %>">
-                            <%= user.name %> (<%= user.email %>)
-                        </option>
-                    <% }) %>
-                </select><br><br>
+                <label><strong>Your Phone:</strong></label>
+                <input type="text" value="<%= phone || 'Please update in profile' %>" readonly style="background-color: #f0f0f0;" /><br><br>
                 
                 <label><strong>Appointment Date:</strong></label>
-                <input type="text" name="date" id="dateInput" placeholder="Select Date" required readonly /><br><br>
+                <input type="text" name="date" id="dateInput" placeholder="Select Date" required readonly />
                 
                 <label><strong>Appointment Time:</strong></label>
                 <select name="time" id="timeSelect" required>
                     <option value="" disabled selected>--Select Time--</option>
                     <option value="09:30">09:30</option>
                     <option value="11:00">11:00</option>
-                    <option value="13:00">13:00</option>
-                    <option value="14:30">14:30</option>
-                    <option value="16:00">16:00</option>
+			        <option value="13:00">13:00</option>
+			        <option value="14:30">14:30</option>
+			        <option value="16:00">16:00</option>
                 </select><br><br>
-
+                
                 <label><strong>Notes (Optional):</strong></label><br>
-                <textarea name="notes" rows="3" placeholder="Requirements"></textarea><br><br>
-
+                <textarea name="notes" rows="3" placeholder="requirements"></textarea><br><br>
+                
                 <button type="submit">Book Appointment</button>
             </form>
-            <p id="bookingSuccess" style="color: green; display: none">Booking submitted successfully!</p>      
+            <p id="bookingSuccess" style="color: green; display: none">Booking submitted successfully!</p>
         </div>
     
         <!-- Flatpickr JS -->
@@ -57,16 +48,14 @@
 
             flatpickr('#dateInput', {
                 minDate: minDate,
-                maxDate: maxDate, 
+                maxDate: maxDate,
                 disable: [
                     function(date) {
-                        // Block Wednesday (3), Saturday (6), Sunday (0)
-                        return [0, 3, 6].includes(date.getDay());
-                    }
-                ],
-                dateFormat: 'Y-m-d',
+                    // Block Wednesday (3), Saturday (6), Sunday (0)
+                    return [0, 3, 6].includes(date.getDay());
+                }],
+                dateFormat: 'Y-m-d', // sends date as YYYY-MM-DD to backend
                 onChange: function(selectedDates, dateStr) {
-                    // When date changes, fetch available time slots
                     if (dateStr) {
                         fetchAvailableSlots(dateStr);
                     }
@@ -88,7 +77,6 @@
                         { value: '16:00', label: '16:00' }
                     ];
 
-                    // Clear and rebuild options
                     timeSelect.innerHTML = '<option value="" disabled selected>--Select Time--</option>';
                     
                     allSlots.forEach(slot => {
@@ -96,8 +84,9 @@
                         option.value = slot.value;
                         option.textContent = slot.label;
                         
-                        // Disable if already booked
-                        if (data.bookedSlots.includes(slot.value)) {
+                        // Fix: Compare times properly (strip seconds)
+                        const bookedTimes = data.bookedSlots.map(time => time.slice(0, 5));
+                        if (bookedTimes.includes(slot.value)) {
                             option.disabled = true;
                             option.textContent += ' (Booked)';
                         }
@@ -107,7 +96,8 @@
                 } catch (error) {
                     console.error('Error fetching slots:', error);
                 }
-            }
+            };
+            
         </script>
     </body><br><br><br>
     <footer>

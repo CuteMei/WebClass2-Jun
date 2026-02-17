@@ -1,24 +1,20 @@
 <html>
     <head>
-        <title>JHH listBooking-page</title>
+        <title>JHH allBooking-page</title>
         <%- include('partials/header1.ejs') %>
     </head>
     <body>
-    ---    if role == admin         //those are tutor's notes, haven't trying to use it yet, but will try to implement it in the future
-    ---        <%- include('partials/navbar3.ejs') %>
-     --   else
-    ---        <%- include('partials/navbar2.ejs') %>
-
-        <%- include('partials/navbar3.ejs') %>
+    
+        <%- include('partials/navbarAdmin.ejs') %>
         <div class="container">
-            <br><h1><strong>List of Booking</strong></h1>
+            <br><h1><strong>All Booking</strong></h1>
             <% if (bookingData.length == 0) { %>
                 <p>No bookings yet.</p>
             <% } else { %>
             <table>
                 <tr>
-                    <th>No.:_</th><th>Full Name:___</th><th>Email:__________</th>
-                    <th>Phone Number:___</th><th>Date:_____________</th><th>Time:___</th>
+                    <th>No.:---</th><th>user_id:---</th><th>Name:-----</th><th>Phone Number:---</th><th>Email:---------------</th>
+                    <th>booking_id:---</th><th>Date---------------</th><th>Time:---</th>
                     <th></th>
                 </tr>
 
@@ -26,9 +22,11 @@
                     bookingData.forEach(function(data) { %>
                 <tr>
                     <td><%- i++ %></td>
+                    <td><%- data.user_id %></td>
                     <td><%- data.name %></td>
+                    <td><%- data.phone_number %></td>
                     <td><%- data.email %></td>
-                    <td><%- data.phone %></td>
+                    <td><%- data.booking_id %></td>
                     <td><%- data.date ? data.date.toDateString() : "N/A" %></td>
                     <td><%- data.time ? data.time.slice(0, 5) : "N/A" %></td>
                     <td>

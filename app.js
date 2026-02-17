@@ -7,7 +7,7 @@ var bcrypt = require('bcrypt');
 
 app.set('view engine','ejs');
 app.use(session({
-    secret: 'jHh2026SecureRandomString!@#',
+    secret: 'jHh2026SecureRandomString!@#', // Use a strong, random secret in production
     resave: true,
     saveUninitialized: true
 }));
@@ -16,95 +16,62 @@ app.use('/public', express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', function(req, res){
+app.get('/', function(req, res){ // Home page
     res.render("home");
 });
 
-app.get('/service', function(req, res){
+app.get('/service', function(req, res){ // Service page
     res.render("service");
 });
 
+// FAQs page - static version for comparison
 // Static FAQs version for comparison
-app.get('/faqs1', function(req, res){
+app.get('/faqs1', function(req, res){ 
     res.render("faqs1");
 });
-// Database-driven FAQs version
-app.get('/faqs', function(req, res) {
+
+// FAQs page - database-driven version
+app.get('/faqs', function(req, res) { 
     conn.query('SELECT * FROM faqs ORDER BY faq_id', function(err, results) {
         if (err) {
-            console.log('Error fetching FAQs:', err);
-            return res.send('Error loading FAQs.');
+            console.error('Error fetching FAQs:', err);
+            return res.render('faqs', { faqData: [] }); // Render with empty data on error
         }
         res.render('faqs', { faqData: results });
     });
 });
 
-//Refistration Route.
+//Registration Route - Improced with validation and error handling
 app.get('/register', function(req, res) {
     res.render("register", {
         error: null,
         success: null }); // Pass null for error and success on initial load
 });
 
-app.post('/register', function (req, res) {
-    //debug:see what is received from form
-    //console.log('Form data received:', req.body);
+app.post('/register', function (req, res) { 
     let { name, email, phone_number, password, passwordVerify } = req.body; //destructuring assignment
-    
-    //4xx = "YOU (user) messed up!", 5xx = "I (server) messed up!", 2xx = "We're good!" 
 
-    // 1. VALIDATION - Check for empty fields
+    // VALIDATION - Check for empty fields
     if (!name || !phone_number || !email || !password || !passwordVerify) {
         return res.status(400).render('register', { 
-            // 400 = USER'S fault - they sent bad data
-            // 400 = Bad Request (Invalid data sent)
-             error: 'All fields are required! Please fill in all the details.' 
+             error: 'All fields are required!' 
         }); 
     }
     
-    // 2. EMAIL FORMAT VALIDATION
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        return res.status(400).render('register', { // 400 = USER'S fault - duplicate email
-            error: 'Please enter a valid email address!' 
-        });
-    }
-
-    // 3. PHONE NUMBER VALIDATION (basic - adjust for your country format)
-    const phoneRegex = /^[0-9]{10,15}$/;
-    if (!phoneRegex.test(phone_number.replace(/[-\s]/g, ''))) {
-        return res.status(400).render('register', { 
-            error: 'Please enter a valid phone number!' 
-        });
-    }
-
-    // 4. PASSWORD STRENGTH CHECK
-    if (password.length < 8) {
-        return res.status(400).render('register', { 
-            error: 'Password must be at least 8 characters long!' 
-        });
-    }
-
-    // 5. PASSWORD MATCH CHECK
+    // PASSWORD MATCH CHECK
     if (password !== passwordVerify) {
         return res.status(400).render('register', { 
             error: 'Passwords do not match!' 
         });
     }
 
-    // 6. CHECK IF EMAIL ALREADY EXISTS
+    // CHECK IF EMAIL ALREADY EXISTS
     conn.query(
         'SELECT email FROM users WHERE email = ?', [email], 
-        // Layer 1: CODE CHECK (in app.js)
-        //-- Layer 2: DATABASE CHECK (in MySQL)
-        //ALTER TABLE users ADD UNIQUE KEY unique_email (email);
-        //-- This means MySQL itself rejects duplicate emails!
         function(err, results) {
             if (err) {
                 console.error('Database error:', err);
                 return res.status(500).render('register', { 
-                    // 500 = Internal Server Error (Something broke in your code)
-                    // 500 = SERVER'S fault - database crashed or query is wrong
                     error: 'Server error. Please try again.' 
                 });
             }
@@ -118,8 +85,8 @@ app.post('/register', function (req, res) {
             // 7. HASH PASSWORD & INSERT USER
             const hashedPassword = bcrypt.hashSync(password, 10);
 
-            conn.query(
-                'INSERT INTO users (name, phone_number, email, password) VALUES (?, ?, ?, ?)', //use parameterized query
+            conn.query( 
+                'INSERT INTO users (name, phone_number, email, password, created_at) VALUES (?, ?, ?, ?, NOW())', 
                 [name, phone_number, email, hashedPassword], //pass values as array
                 function(err, results) {
                     if (err) {
@@ -128,7 +95,7 @@ app.post('/register', function (req, res) {
                             error: 'Registration failed. Please try again.' 
                         });
                     }
-                    console.log('✅ User registered successfully:', email);
+                    console.log('User registered successfully:', email);
                     res.render('login', { 
                         success: 'Registration successful! Please login.' 
                     });
@@ -138,13 +105,14 @@ app.post('/register', function (req, res) {
     );
 });
 
-app.get('/login', function(req, res) {
+app.get('/login', function(req, res) { // Login page
     res.render("login");
 });
 
 app.post('/auth', async function(req, res) { //added async
-    var email = req.body.email;
-    var password = req.body.password;
+    let { email, password} = req.body;
+    //var email = req.body.email;
+    //var password = req.body.password;
     
     // validation for empty fields
     if (!email || !password) {
@@ -160,14 +128,14 @@ app.post('/auth', async function(req, res) { //added async
 
             if (results.length >0) {
                 const ok = await bcrypt.compare(password, results[0].password);
-                if (ok) {
-                    //Passwords match, set session variables
+                if (ok) { 
                     req.session.loggedin = true;
                     req.session.email = email;
                     req.session.name = results[0].name;
                     req.session.user_id = results[0].user_id; //Important for bookings!
                     req.session.role = results[0].role; // Store user role in session
-                    
+                    req.session.phone_number = results[0].phone_number;
+
                     console.log('User logged in:', email, 'Role:', req.session.role);
                     
                     if (results[0].role === 'admin') {
@@ -176,107 +144,197 @@ app.post('/auth', async function(req, res) { //added async
                         res.redirect('/userPage'); // Redirect to user dashboard
                     }
                 } else {
-                    //passwords incorrect.
-                    res.send('Incorrect Name and/or Password!');
+                    res.send('Incorrect Password!');
                 }
-            } else {
-                //user not found.
-                res.send('Incorrect Name and/or Password!');
+            } else { // No user found with that email
+                res.send('Incorrect Email!');
             }
         });
 })  
 
-// Reusable middleware: protects any route that requires login
+// Reusable middleware for requires login 
 function requireLogin(req, res, next) {
     if (req.session.loggedin) {
         next(); // logged in, continue
     } else {
-        res.send('Please login to view this page!');
+        res.redirect('/login'); // Redirect to login page if not logged in
     }
 }
-// Apply requireLogin to both GET and POST
-app.get('/adminPage', requireLogin, function (req, res) {
-    res.render('adminPage', { message: null });
-});
-app.post('/adminPage', requireLogin, function (req, res, next) {
-    var name = req.body.name;
-    var phone = req.body.phone;
-    var date = req.body.date;
-    var time = req.body.time;
 
-    // Fixed: use parameterized query instead of template literal
-    var sql = 'INSERT INTO booking (name, phone, date, time) VALUES (?, ?, ?, ?)';
-    conn.query(sql, [name, phone, date, time], function(err, result) {
-        if (err) {
-            console.log('Error inserting booking:', err);
-            return res.send('Error creating booking.');  // Fixed: don't crash on error
-        }
-        console.log('record inserted');
-        res.render('adminPage', { message: 'Booking added successfully!' });
-    });
-});
-app.get('/newBooking', requireLogin, function (req, res) {
-    res.render('newBooking', { message: null, name:req.session.name });
-});
-  
-app.post('/newBooking', requireLogin, function (req, res, next) {
-    var name = req.body.name;
-    var phone = req.body.phone;
-    var date = req.body.date;
-    var time = req.body.time;
-
-    // Fixed: use parameterized query instead of template literal
-    var sql = 'INSERT INTO booking (name, phone, date, time) VALUES (?, ?, ?, ?)';
-    conn.query(sql, [name, phone, date, time], function(err, result) {
-        if (err) {
-            console.log('Error inserting booking:', err);
-            return res.send('Error creating booking.');  // Fixed: don't crash on error
-        }
-        console.log('record inserted');
-        res.render('newBooking', { message: 'Booking added successfully!' });
+//For user logged in. Apply requireLogin to both GET and POST
+app.get('/userPage', requireLogin, function (req, res) {
+    res.render('userPage', { 
+        name: req.session.name, 
+        phone: req.session.phone_number || '', // Handle case where phone_number might be null
     });
 });
 
-// Apply requireLogin to both GET and POST
-app.get('/newBookingA', requireLogin, function (req, res) {
-    res.render('newBookingA', { message: null });
-});
-  
-app.post('/newBookingA', requireLogin, function (req, res, next) {
-    var name = req.body.name;
-    var phone = req.body.phone;
-    var date = req.body.date;
-    var time = req.body.time;
-
-    // Fixed: use parameterized query instead of template literal
-    var sql = 'INSERT INTO booking (name, phone, date, time) VALUES (?, ?, ?, ?)';
-    conn.query(sql, [name, phone, date, time], function(err, result) {
-        if (err) {
-            console.log('Error inserting booking:', err);
-            return res.send('Error creating booking.');  // Fixed: don't crash on error
+app.post('/userCreateBooking', requireLogin, function(req, res) {
+    const { date, time, notes } = req.body;
+    const user_id = req.session.user_id;
+    
+    conn.query(
+        'INSERT INTO booking (user_id, date, time, notes) VALUES (?, ?, ?, ?)',
+        [user_id, date, time, notes],
+        function(err, result) {
+            if (err) {
+                return res.send('Error creating booking');
+            }
+            res.redirect('/myBookings');
         }
-        console.log('record inserted');
-        res.render('newBookingA', { message: 'Booking added successfully!' });
+    );
+});
+
+app.get('/myBookings', requireLogin, function (req, res, next) {
+    //Get only this user's bookings
+    conn.query(
+        `SELECT b.booking_id, b.date, b.time, b.notes, b.created_at,
+            u.name, u.phone_number, u.email
+            FROM booking b      JOIN users u ON b.user_id = u.user_id
+            WHERE b.user_id = ?     ORDER BY b.date DESC, b.time ASC`,
+            [req.session.user_id],
+            function(err, results) {
+            if (err) {
+                console.log('Error fetching bookings:', err);
+                return res.send('Error loading bookings');
+            }
+        res.render('myBookings', { 
+            bookingData: results,
+            message: null, // No message on initial load
+        });
     });
 });
 
-app.get('/listBooking', requireLogin, function(req, res) {
-    conn.query('SELECT booking.id, users.name, users.email, booking.phone, booking.date, booking.time FROM booking JOIN users ON booking.name = users.name', function (err, result) {
-        if (err) {
-            console.log('Error fetching bookings:', err);
-            return res.send('Error loading bookings.');  // Fixed: don't crash on error
-        }
-        console.log(result);
-        res.render('listBooking', { title: 'List of Booking', bookingData: result });
-    });    
+app.post('/userCreateBooking', requireLogin, function(req, res) {
+    const { date, time, notes } = req.body;
+    const user_id = req.session.user_id;
+    
+    // Validation
+    if (!date || !time) {
+        return res.send('Please select date and time!');
+    }
+
+    // Check for double booking
+    conn.query(
+        'SELECT * FROM booking WHERE date = ? AND time = ?',
+        [date, time],
+        function(err, results) {
+            if (err) {
+                console.log('Error checking booking:', err);
+                return res.send('Error creating booking');
+            }
+            
+            if (results.length > 0) {
+                return res.send('This time slot is already booked! Please choose another time.');
+            }
+            // Create booking if no double booking
+            conn.query(
+            // Don't specify created_at - let MySQL handle it!
+                'INSERT INTO booking (user_id, date, time, notes) VALUES (?, ?, ?, ?)',
+                [user_id, date, time, notes],
+                function(err, result) {
+                    if (err) {
+                        console.log('Error:', err);
+                        return res.send('Error creating booking');
+                    }
+                    res.redirect('/myBookings');
+            });
+    })
 });
 
-app.get('/listContacts', function(req, res){
-    conn.query('SELECT * FROM users', function (err, result) {
-        if (err) throw err;
-        console.log(result);
-        res.render('listContacts', { title: 'List of Contacts   ', contactsData: result});
-    });    
+// Reusable middleware for requires admin login 
+function requireAdmin(req, res, next) {
+    if (req.session.loggedin && req.session.role === 'admin') {
+        next(); // logged in and is admin, continue
+    } else {
+        res.redirect('/login'); // Redirect to login page if not admin
+    }
+}
+
+app.get('/adminPage', requireAdmin, function(req, res) {
+    conn.query(
+        'SELECT user_id, name, email, phone_number FROM users WHERE role != "admin" ORDER BY name', 
+        function(err, results) {
+            if (err) {
+                console.error('Error fetching users:', err);
+                return res.render('Error loading page');
+            }
+            console.log('Users found:', results);  // ← ADD THIS LINE!
+            console.log('Number of users:', results.length);  // ← AND THIS!
+            res.render('adminPage', { 
+                users: results, // Pass user data to adminPage
+                name: req.session.name,
+                message: null,   
+            });
+    });
+});
+
+app.post('/adminCreateBooking', requireAdmin, async function(req, res) {
+    const { user_id, date, time, notes } = req.body;
+    
+    if (!user_id || !date || !time) {
+        return res.send('Please select patient, date, and time!');
+    }
+    
+    conn.query(
+        'SELECT * FROM booking WHERE date = ? AND time = ?',         
+        [date, time],
+        function(err, results) {
+            if (err) {
+                console.log('Error checking booking:', err);
+                return res.send('Error creating booking');
+            }
+            if (results.length > 0) {
+                return res.send('This time slot is already booked! Please choose another one.');
+            }
+            //Create booking if no double booking
+            conn.query(
+                    'INSERT INTO booking (user_id, date, time, notes) VALUES (?, ?, ?, ?)',
+                    [user_id, date, time, notes || null],
+                    function(err, results) {
+                        if (err) {
+                            console.log('Error inserting booking:', err);
+                            return res.send('Error creating booking');
+                        }
+                        console.log('Booking created successfully');
+                        res.redirect('/allBookings');
+                });
+        });
+});
+
+app.get('/allBookings', requireAdmin, function(req, res) {
+    conn.query(
+        `SELECT b.booking_id, b.date, b.time, b.notes, b.created_at, u.name, u.phone_number, u.email
+        FROM booking b JOIN users u     ON b.user_id = u.user_id    ORDER BY b.date DESC, b.time ASC`,
+        function(err, results) {
+            if (err) {
+                console.log('Error fetching bookings:', err);
+                return res.send('Error loading bookings');
+            }
+            res.render('allBookings', { 
+                bookingData: results,
+                message: null, // No message on initial load
+            });
+        }
+    );
+});
+
+app.get('/allUsers', requireAdmin, function(req, res) {
+    conn.query(
+        'SELECT user_id, name, phone_number, email FROM users WHERE role != "admin" ORDER BY name',
+        function(err, results) {
+            console.log('Users found:', results.length);  // ← ADD THIS!
+            console.log('Results:', results);   
+            if (err) {
+                console.log('Error fetching users:', err);
+                return res.send('Error loading users');
+            }
+            
+            res.render('allUsers', {
+                contactsData: results
+            });
+        }
+    );
 });
 
 app.get('/logout', (req,res) => {

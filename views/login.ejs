@@ -4,7 +4,7 @@
         <%- include('partials/header1.ejs') %>
     </head>
     <body>
-        <%- include('partials/navbar1.ejs') %>
+        <%- include('partials/navbarPublic.ejs') %>
         <div class="container"><br>
             <h1><strong>Login</strong></h1>
 
@@ -19,13 +19,13 @@
             <!-- END OF MESSAGE BLOCKS -->
 
             <form action="/auth" method="post">
-                <input type="email" name="email" placeholder="Enter Email" required /><br><br>
-                <input type="password" name="password" placeholder="Enter Password" required/><br><br>
+                <input type="email" name="email" placeholder="Enter Email" required />
+                <input type="password" name="password" placeholder="Enter Password" required/>
                 <button type="submit">Login</button>
             </form>
             <p><b>Don't have an account?</b> Go to <a href="register">Register</a> first please?<br><br>
-                <b>Forgot your password?</b> Contact us at <a href="mailto:JunHealthcareHouse@gmail.com"><br>
-				JunHealthcareHouse@gmail.com</a> to reset it.</p>
+                <b>Forgot your password?</b> Contact us at <a href="mailto:JunHealthcareHouse@gmail.com">
+				JunHealthcareHouse@gmail.com</a> to reset it.</p><br><br>
             <p></p>
         </div>
     </body>

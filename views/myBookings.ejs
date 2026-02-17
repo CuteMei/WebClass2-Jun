@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <title>JHH myBooking-page</title>
+        <%- include('partials/header1.ejs') %>
+    </head>
+    <body>
+        <%- include('partials/navbarUser.ejs') %>
+        <div class="container">
+            <br><h1><strong>My Bookings</strong></h1>
+            <% if (bookingData.length == 0) { %>
+                <p>No bookings yet.</p>
+            <% } else { %>
+            <table>
+                <tr>
+                    <th>No.:_</th><th>Full Name:___</th><th>Email:__________</th>
+                    <th>Phone Number:___</th><th>Date:_____________</th><th>Time:___</th>
+                    <th></th>
+                </tr>
+
+                <% let i = 1;
+                    bookingData.forEach(function(data) { %>
+                <tr>
+                    <td><%- i++ %></td>
+                    <td><%- data.name %></td>
+                    <td><%- data.email %></td>
+                    <td><%- data.phone %></td>
+                    <td><%- data.date ? data.date.toDateString() : "N/A" %></td>
+                    <td><%- data.time ? data.time.slice(0, 5) : "N/A" %></td>
+                    <td>
+                        <form method="post">
+                            <input type="hidden" name="bookingId" value="<%- data.id %>" />
+                            <button type="submit">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                <% }) %>
+            </table>
+            <% } %>
+        </div>
+    </body><br><br><br>
+    <footer>
+        <p>&copy; 2026 Jun Healthcare House. All rights reserved.</p>
+    </footer>
+</html>

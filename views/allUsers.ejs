@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>JHH All Users</title>
+        <%- include('partials/header1.ejs') %>
+    </head>
+    <body>
+        <%- include('partials/navbarAdmin.ejs') %>
+        <div class="container">
+            <br><h2><strong>All Users</strong></h2>
+            
+            <% if (contactsData.length === 0) { %>
+                <p>No users registered yet.</p>
+            <% } else { %>
+            <table>
+                <tr>
+                    <th>No.</th>
+                    <th>Full Name</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                </tr>
+
+                <% let i = 1;
+                   contactsData.forEach(function(data) { %>                
+                <tr>
+                    <td><%= i++ %></td>
+                    <td><%= data.name %></td>
+                    <td><%= data.phone_number %></td>
+                    <td><%= data.email %></td>
+                </tr>                    
+                <% }); %>
+            </table>
+            <% } %>
+        </div>
+    </body>
+    <footer>
+        <p>&copy; 2026 Jun Healthcare House. All rights reserved.</p>
+    </footer>
+</html>
