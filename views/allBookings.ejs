@@ -13,8 +13,8 @@
             <% } else { %>
             <table>
                 <tr>
-                    <th>No.:---</th><th>user_id:---</th><th>Name:-----</th><th>Phone Number:---</th><th>Email:---------------</th>
-                    <th>booking_id:---</th><th>Date---------------</th><th>Time:---</th>
+                    <th>No.:-</th><th>booking_id:-</th><th>Name:-</th>
+                    <th>Date------------</th><th>Time:-</th><th>Phone Number:-</th><th>Email:-----------</th>
                     <th></th>
                 </tr>
 
@@ -22,13 +22,14 @@
                     bookingData.forEach(function(data) { %>
                 <tr>
                     <td><%- i++ %></td>
-                    <td><%- data.user_id %></td>
-                    <td><%- data.name %></td>
-                    <td><%- data.phone_number %></td>
-                    <td><%- data.email %></td>
                     <td><%- data.booking_id %></td>
+                    <td><%- data.name %></td>
                     <td><%- data.date ? data.date.toDateString() : "N/A" %></td>
                     <td><%- data.time ? data.time.slice(0, 5) : "N/A" %></td>
+                    <td><%- data.phone_number %></td>
+                    <td><%- data.email %></td>
+                    
+                    
                     <td>
                         <form method="post">
                             <input type="hidden" name="bookingId" value="<%- data.id %>" />

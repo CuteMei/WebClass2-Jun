@@ -7,7 +7,7 @@
     <body>
         <%- include('partials/navbarAdmin.ejs') %>
         <div class="container"><br>
-            <h1><strong>Welcome <%=name %> to Admin  Dashboard</strong></h1>
+            <h1><strong>Welcome <%= name %> to Admin  Dashboard</strong></h1>
 
             <% if (message) { %>
                 <p style="color: green;"> <%- message %></p>
@@ -15,7 +15,7 @@
 
             <form method="post" action="/adminCreateBooking">
                 
-                <br><label><strong>Select Patient:</strong></label>
+                <pre>Hi <%= name %></pre><br><label><strong>Select Patient:</strong></label>
                 
                 <select name="user_id" required>
                     <option value="" disabled selected>--Select Patient--</option>
@@ -61,7 +61,7 @@
                 disable: [
                     function(date) {
                         // Block Wednesday (3), Saturday (6), Sunday (0)
-                        return [0, 3, 6].includes(date.getDay());
+                        return [0, 3, 4, 6].includes(date.getDay());
                     }
                 ],
                 dateFormat: 'Y-m-d',

@@ -156,10 +156,9 @@ app.post('/auth', async function(req, res) { //added async
 function requireLogin(req, res, next) {
     if (req.session.loggedin) {
         next(); // logged in, continue
-    } else {
-        res.redirect('/login'); // Redirect to login page if not logged in
-    }
-}
+    } else { // Redirect to login page if not logged in
+        res.redirect('/login');    
+}}
 
 //For user logged in. Apply requireLogin to both GET and POST
 app.get('/userPage', requireLogin, function (req, res) {
@@ -246,10 +245,9 @@ app.post('/userCreateBooking', requireLogin, function(req, res) {
 function requireAdmin(req, res, next) {
     if (req.session.loggedin && req.session.role === 'admin') {
         next(); // logged in and is admin, continue
-    } else {
-        res.redirect('/login'); // Redirect to login page if not admin
-    }
-}
+    } else { // Redirect to login page if not admin
+        res.redirect('/login'); 
+}}
 
 app.get('/adminPage', requireAdmin, function(req, res) {
     conn.query(
@@ -304,8 +302,10 @@ app.post('/adminCreateBooking', requireAdmin, async function(req, res) {
 
 app.get('/allBookings', requireAdmin, function(req, res) {
     conn.query(
-        `SELECT b.booking_id, b.date, b.time, b.notes, b.created_at, u.name, u.phone_number, u.email
-        FROM booking b JOIN users u     ON b.user_id = u.user_id    ORDER BY b.date DESC, b.time ASC`,
+        `SELECT b.booking_id, u.name, b.date, b.time, b.notes, b.created_at, u.phone_number, u.email
+        FROM booking b JOIN users u     ON b.user_id = u.user_id  WHERE b.date >= CURDATE() 
+        ORDER BY b.date ASC, b.time ASC`, // Only show current and future bookings
+        
         function(err, results) {
             if (err) {
                 console.log('Error fetching bookings:', err);

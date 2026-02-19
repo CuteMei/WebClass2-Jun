@@ -12,7 +12,7 @@
             <% } else { %>
             <table>
                 <tr>
-                    <th>No.:_</th><th>Full Name:___</th><th>Email:__________</th>
+                    <th>No.:_</th><th>Name:___</th><th>Email:______________</th>
                     <th>Phone Number:___</th><th>Date:_____________</th><th>Time:___</th>
                     <th></th>
                 </tr>
@@ -21,9 +21,10 @@
                     bookingData.forEach(function(data) { %>
                 <tr>
                     <td><%- i++ %></td>
+                    <td><%= data.user_id %></td>
                     <td><%- data.name %></td>
                     <td><%- data.email %></td>
-                    <td><%- data.phone %></td>
+                    <td><%- data.phone_number %></td>
                     <td><%- data.date ? data.date.toDateString() : "N/A" %></td>
                     <td><%- data.time ? data.time.slice(0, 5) : "N/A" %></td>
                     <td>
