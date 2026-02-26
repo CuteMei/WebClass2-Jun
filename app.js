@@ -165,21 +165,75 @@ app.get('/userPage', requireLogin, function (req, res) {
     res.render('userPage', { 
         name: req.session.name, 
         phone: req.session.phone_number || '', // Handle case where phone_number might be null
+        user_id: req.session.user_id, // Pass user_id to userPage for booking form
     });
+});
+
+app.get('/available-slots', function(req, res) {
+    const date = req.query.date;
+    
+    if (!date) {
+        return res.json({ bookedSlots: [] });
+    }
+    
+    // Get all bookings for this date
+    conn.query(
+        'SELECT time FROM booking WHERE date = ?',
+        [date],
+        function(err, results) {
+            if (err) {
+                console.log('Error checking slots:', err);
+                return res.json({ bookedSlots: [] });
+            }
+            
+            // Extract just the times
+            const bookedTimes = results.map(booking => {
+                // Format: "09:30:00" -> "09:30"
+                return booking.time.slice(0, 5);
+            });
+            
+            res.json({ bookedSlots: bookedTimes });
+        }
+    );
 });
 
 app.post('/userCreateBooking', requireLogin, function(req, res) {
     const { date, time, notes } = req.body;
     const user_id = req.session.user_id;
     
+    // Validation
+    if (!date || !time) {
+        return res.send('Please select both date and time!');
+    }
+
+    // Check if this slot is already booked
     conn.query(
-        'INSERT INTO booking (user_id, date, time, notes) VALUES (?, ?, ?, ?)',
-        [user_id, date, time, notes],
-        function(err, result) {
+        'SELECT * FROM booking WHERE date = ? AND time = ?',
+        [date, time],
+        function(err, existingBookings) {
             if (err) {
+                console.log('Error checking booking:', err);
                 return res.send('Error creating booking');
             }
-            res.redirect('/myBookings');
+
+            // If slot is taken
+            if (existingBookings.length > 0) {
+                return res.send('Sorry! This time slot is already booked. Please choose another time.');
+            }
+
+            // Slot is available - create booking
+            conn.query(
+                'INSERT INTO booking (user_id, date, time, notes) VALUES (?, ?, ?, ?)',
+                [user_id, date, time, notes],
+                function(err, result) {
+                    if (err) {
+                        console.log('Error creating booking:', err);
+                        return res.send('Error creating booking');
+                    }
+                    console.log('Booking created successfully for user_id:', user_id, 'on', date, time);
+                    res.redirect('/myBookings');
+                }
+            );
         }
     );
 });
@@ -187,10 +241,10 @@ app.post('/userCreateBooking', requireLogin, function(req, res) {
 app.get('/myBookings', requireLogin, function (req, res, next) {
     //Get only this user's bookings
     conn.query(
-        `SELECT b.booking_id, b.date, b.time, b.notes, b.created_at,
-            u.name, u.phone_number, u.email
+        `SELECT b.date, b.time, b.notes, b.created_at,
+            u.name, u.phone_number, u.email, b.booking_id, b.user_id
             FROM booking b      JOIN users u ON b.user_id = u.user_id
-            WHERE b.user_id = ?     ORDER BY b.date DESC, b.time ASC`,
+            WHERE b.user_id = ?     ORDER BY b.date ASC, b.time ASC`,
             [req.session.user_id],
             function(err, results) {
             if (err) {
@@ -241,6 +295,29 @@ app.post('/userCreateBooking', requireLogin, function(req, res) {
     })
 });
 
+app.post('/deleteMyBooking', requireLogin, function(req, res) {
+    const bookingId = req.body.bookingId;
+    const userId = req.session.user_id;
+    
+    // Security: Only delete if booking belongs to this user
+    conn.query(
+        'DELETE FROM booking WHERE booking_id = ? AND user_id = ?',
+        [bookingId, userId],
+        function(err, result) {
+            if (err) {
+                console.log('Error deleting booking:', err);
+                return res.send('Error deleting booking');
+            }
+            
+            if (result.affectedRows === 0) {
+                return res.send('Booking not found or unauthorized');
+            }
+            
+            res.redirect('/myBookings');
+        }
+    );
+});
+
 // Reusable middleware for requires admin login 
 function requireAdmin(req, res, next) {
     if (req.session.loggedin && req.session.role === 'admin') {
@@ -267,31 +344,113 @@ app.get('/adminPage', requireAdmin, function(req, res) {
     });
 });
 
+app.get('/editBooking', requireAdmin, function(req, res) {
+    const bookingId = req.query.bookingId;
+    
+    // Get the booking to edit
+    conn.query(
+        'SELECT * FROM booking WHERE booking_id = ?',
+        [bookingId],
+        function(err, bookingResults) {
+            if (err || bookingResults.length === 0) {
+                return res.send('Booking not found');
+            }
+            
+            // Get all users for dropdown
+            conn.query(
+                'SELECT user_id, name, email FROM users WHERE role != "admin" ORDER BY name',
+                function(err, userResults) {
+                    if (err) {
+                        return res.send('Error loading users');
+                    }
+                    
+                    res.render('editBooking', {
+                        booking: bookingResults[0],
+                        users: userResults
+                    });
+                }
+            );
+        }
+    );
+});
+
+app.post('/updateBooking', requireAdmin, function(req, res) {
+    const { bookingId, user_id, date, time, notes } = req.body;
+    
+    // Check for conflicts (excluding this booking)
+    conn.query(
+        'SELECT * FROM booking WHERE date = ? AND time = ? AND booking_id != ?',
+        [date, time, bookingId],
+        function(err, conflicts) {
+            if (err) {
+                console.log('Error checking conflicts:', err);
+                return res.send('Error updating booking');
+            }
+            
+            if (conflicts.length > 0) {
+                return res.send('This time slot is already booked! Please choose another time.');
+            }
+            
+            // Update the booking
+            conn.query(
+                'UPDATE booking SET user_id = ?, date = ?, time = ?, notes = ? WHERE booking_id = ?',
+                [user_id, date, time, notes, bookingId],
+                function(err, result) {
+                    if (err) {
+                        console.log('Error updating:', err);
+                        return res.send('Error updating booking');
+                    }
+                    res.redirect('/allBookings');
+                }
+            );
+        }
+    );
+});
+
+app.post('/adminDeleteBooking', requireAdmin, function(req, res) {
+    const bookingId = req.body.bookingId;
+    
+    conn.query(
+        'DELETE FROM booking WHERE booking_id = ?',
+        [bookingId],
+        function(err, result) {
+            if (err) {
+                console.log('Error deleting booking:', err);
+                return res.send('Error deleting booking');
+            }
+            res.redirect('/allBookings');
+        }
+    );
+});
+
 app.post('/adminCreateBooking', requireAdmin, async function(req, res) {
     const { user_id, date, time, notes } = req.body;
     
+    // Validation
     if (!user_id || !date || !time) {
         return res.send('Please select patient, date, and time!');
     }
     
+    // Check for double booking
     conn.query(
         'SELECT * FROM booking WHERE date = ? AND time = ?',         
         [date, time],
-        function(err, results) {
+        function(err, existingBookings) {
             if (err) {
                 console.log('Error checking booking:', err);
                 return res.send('Error creating booking');
             }
-            if (results.length > 0) {
+            if (existingBookings.length > 0) {
                 return res.send('This time slot is already booked! Please choose another one.');
             }
+            
             //Create booking if no double booking
             conn.query(
                     'INSERT INTO booking (user_id, date, time, notes) VALUES (?, ?, ?, ?)',
                     [user_id, date, time, notes || null],
                     function(err, results) {
                         if (err) {
-                            console.log('Error inserting booking:', err);
+                            console.log('Error creating booking:', err);
                             return res.send('Error creating booking');
                         }
                         console.log('Booking created successfully');
@@ -300,9 +459,39 @@ app.post('/adminCreateBooking', requireAdmin, async function(req, res) {
         });
 });
 
+app.get('/searchBookings', requireAdmin, function(req, res) {
+    const searchTerm = req.query.search || '';
+    
+    if (!searchTerm) {
+        // No search term, redirect to all bookings
+        return res.redirect('/allBookings');
+    }
+    
+    conn.query(
+        `SELECT b.booking_id, b.date, b.time, b.notes,
+            u.user_id, u.name, u.email, u.phone_number
+        FROM booking b      JOIN users u ON b.user_id = u.user_id
+        WHERE u.name LIKE ? OR u.email LIKE ? OR DATE_FORMAT(b.date, '%Y-%m-%d') LIKE ?
+        ORDER BY b.date ASC, b.time ASC`,
+        [`%${searchTerm}%`, `%${searchTerm}%`, `%${searchTerm}%`],
+        function(err, results) {
+            if (err) {
+                console.log('Search error:', err);
+                return res.send('Error searching bookings');
+            }
+            
+            res.render('allBookings', {
+                bookingData: results,
+                searchTerm: searchTerm
+            });
+        }
+    );
+});
+
 app.get('/allBookings', requireAdmin, function(req, res) {
     conn.query(
-        `SELECT b.booking_id, u.name, b.date, b.time, b.notes, b.created_at, u.phone_number, u.email
+        `SELECT b.booking_id, b.date, b.time, b.notes, b.created_at, 
+            u.user_id, u.name, u.phone_number, u.email
         FROM booking b JOIN users u     ON b.user_id = u.user_id  WHERE b.date >= CURDATE() 
         ORDER BY b.date ASC, b.time ASC`, // Only show current and future bookings
         
@@ -313,8 +502,39 @@ app.get('/allBookings', requireAdmin, function(req, res) {
             }
             res.render('allBookings', { 
                 bookingData: results,
-                message: null, // No message on initial load
+                searchTerm: null // No search term on initial load
             });
+        }
+    );
+});
+
+app.get('/adminCreateUser', requireAdmin, function(req, res) {
+    res.render('adminCreateUser', { error: null });
+});
+
+app.post('/adminRegisterUser', requireAdmin, function(req, res) {
+    const { name, email, phone_number } = req.body;
+    const defaultPassword = 'Welcome123';
+    
+    // Hash the default password
+    const hashedPassword = bcrypt.hashSync(defaultPassword, 10);
+    
+    conn.query(
+        'INSERT INTO users (name, email, phone_number, password) VALUES (?, ?, ?, ?)',
+        [name, email, phone_number, hashedPassword],
+        function(err, result) {
+            if (err) {
+                if (err.code === 'ER_DUP_ENTRY') {
+                    return res.render('adminCreateUser', { 
+                        error: 'Email already exists!' 
+                    });
+                }
+                console.log('Error creating user:', err);
+                return res.render('adminCreateUser', { 
+                    error: 'Error creating user' 
+                });
+            }
+            res.redirect('/allUsers');
         }
     );
 });
@@ -333,6 +553,49 @@ app.get('/allUsers', requireAdmin, function(req, res) {
             res.render('allUsers', {
                 contactsData: results
             });
+        }
+    );
+});
+
+app.get('/editUser', requireAdmin, function(req, res) {
+    const userId = req.query.userId;
+    
+    conn.query(
+        'SELECT * FROM users WHERE user_id = ?',
+        [userId],
+        function(err, results) {
+            if (err || results.length === 0) {
+                return res.send('User not found');
+            }
+            res.render('editUser', {
+                user: results[0],
+                error: null
+            });
+        }
+    );
+});
+
+app.post('/updateUser', requireAdmin, function(req, res) {
+    const { userId, name, email, phone_number } = req.body;
+    
+    conn.query(
+        'UPDATE users SET name = ?, email = ?, phone_number = ? WHERE user_id = ?',
+        [name, email, phone_number, userId],
+        function(err, result) {
+            if (err) {
+                if (err.code === 'ER_DUP_ENTRY') {
+                    conn.query('SELECT * FROM users WHERE user_id = ?', [userId], function(err2, results) {
+                        return res.render('editUser', {
+                            user: results[0],
+                            error: 'Email already in use by another user!'
+                        });
+                    });
+                } else {
+                    return res.send('Error updating user');
+                }
+            } else {
+                res.redirect('/allUsers');
+            }
         }
     );
 });

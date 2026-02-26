@@ -11,14 +11,18 @@
             <% if (contactsData.length === 0) { %>
                 <p>No users registered yet.</p>
             <% } else { %>
+            
+            <a href="/adminCreateUser">
+                <button type="button"><strong>+ Create New User</strong></button>
+            </a><br><br>
+     
             <table>
                 <tr>
-                    <th>No.---</th>
-                    <th>User ID---</th>
-                    <th>Name---</th>
-                    <th>Phone Number---</th>
-                    <th>Email--------------</th>
-                    <th>Password?---</th>
+                    <th>No.</th>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
                 </tr>
 
                 <% let i = 1;
@@ -29,7 +33,11 @@
                     <td><%= data.name %></td>
                     <td><%= data.phone_number %></td>
                     <td><%= data.email %></td>
-                    <td><%= data.password %></td>
+                    <td>
+                        <a href="/editUser?userId=<%= data.user_id %>">
+                            <button type="button">Edit</button>
+                        </a>
+                    </td>
                 </tr>                    
                 <% }); %>
             </table>

@@ -8,13 +8,24 @@
         <%- include('partials/navbarAdmin.ejs') %>
         <div class="container">
             <br><h1><strong>All Booking</strong></h1>
+            <form method="get" action="/searchBookings" style="margin-bottom: 20px;">
+                <input type="text" name="search" placeholder="Search by name, email, or date..." 
+                        value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
+                        style="width: 300px; padding: 5px;" />
+                <button type="submit"><strong>Search</strong></button>
+                <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
+                    <a href="/allBookings"><button type="button"><strong>Clear Search</strong></button></a>
+                    <span style="margin-left: 10px;">Found: <%= bookingData.length %> results</span>
+                <% } %>
+            </form>
             <% if (bookingData.length == 0) { %>
                 <p>No bookings yet.</p>
             <% } else { %>
+
             <table>
                 <tr>
-                    <th>No.:-</th><th>booking_id:-</th><th>Name:-</th>
-                    <th>Date------------</th><th>Time:-</th><th>Phone Number:-</th><th>Email:-----------</th>
+                    <th>No.</th><th>User ID</th><th>Name</th><th>Booking ID</th>
+                    <th>Date</th><th>Time</th><th>Phone Number</th><th>Email</th>
                     <th></th>
                 </tr>
 
@@ -22,8 +33,9 @@
                     bookingData.forEach(function(data) { %>
                 <tr>
                     <td><%- i++ %></td>
-                    <td><%- data.booking_id %></td>
+                    <td><%- data.user_id %></td>
                     <td><%- data.name %></td>
+                    <td><%- data.booking_id %></td>
                     <td><%- data.date ? data.date.toDateString() : "N/A" %></td>
                     <td><%- data.time ? data.time.slice(0, 5) : "N/A" %></td>
                     <td><%- data.phone_number %></td>
@@ -31,9 +43,11 @@
                     
                     
                     <td>
-                        <form method="post">
-                            <input type="hidden" name="bookingId" value="<%- data.id %>" />
-                            <button type="submit">Remove</button>
+                        <a href="/editBooking?bookingId=<%= data.booking_id %>">
+                            <button type="submit"><strong>Edit</strong></button></a>
+                        <form method="post" action="/adminDeleteBooking" style="display: inline;">
+                            <input type="hidden" name="bookingId" value="<%= data.booking_id %>" />
+                            <button type="submit1" onclick="return confirm('Delete this booking?')"><strong>Cancel</strong></button>
                         </form>
                     </td>
                 </tr>

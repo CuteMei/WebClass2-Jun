@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>Create New User</title>
+        <%- include('partials/header1.ejs') %>
+    </head>
+    <body>
+        <%- include('partials/navbarAdmin.ejs') %>
+        <div class="container"><br>
+            <h1><strong>Create New User</strong></h1>
+            
+            <% if (error) { %>
+                <p style="color: red;"><%= error %></p>
+            <% } %>
+            
+            <form method="post" action="/adminRegisterUser">
+                <label><strong>Full Name:</strong></label>
+                <input type="text" name="name" required /><br><br>
+                
+                <label><strong>Email:</strong></label>
+                <input type="email" name="email" required /><br><br>
+                
+                <label><strong>Phone Number:</strong></label>
+                <input type="tel" name="phone_number" required /><br><br>
+                
+                <p><em>Default password: Welcome123</em></p>
+                <p><em>User can change password after first login</em></p>
+                
+                <button type="submit">Create User</button>
+                <a href="/allUsers"><button type="button">Cancel</button></a>
+            </form>
+        </div>
+    </body>
+    <footer>
+        <p>&copy; 2026 Jun Healthcare House. All rights reserved.</p>
+    </footer>
+</html>

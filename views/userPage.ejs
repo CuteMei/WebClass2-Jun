@@ -8,9 +8,10 @@
         <%- include('partials/navbarUser.ejs') %>
         <div class="container"><br>
             <h1><strong>Welcome <%=name %> to book your Appointment</strong></h1><br>
-            
-            
+                        
             <form method="post" action="/userCreateBooking">
+                <input type="hidden" name="user_id" value="<%= user_id %>" />
+
                 <label><strong>Your Name:</strong></label>
                 <input type="text" name="name" value="<%= name %>" readonly style="background-color: #f0f0f0;" disabled />
                 
@@ -31,9 +32,9 @@
                 </select><br><br>
                 
                 <label><strong>Notes (Optional):</strong></label><br>
-                <textarea name="notes" rows="3" placeholder="requirements"></textarea><br><br>
+                <textarea name="notes" rows="3" cols="50" placeholder="requirements"></textarea><br><br>
                 
-                <button type="submit">Book Appointment</button>
+                <button type="submit"><strong>Book Appointment</strong></button>
             </form>
             <p id="bookingSuccess" style="color: green; display: none">Booking submitted successfully!</p>
         </div>
@@ -77,6 +78,7 @@
                         { value: '16:00', label: '16:00' }
                     ];
 
+                    // Clear and rebuild options
                     timeSelect.innerHTML = '<option value="" disabled selected>--Select Time--</option>';
                     
                     allSlots.forEach(slot => {
@@ -84,11 +86,11 @@
                         option.value = slot.value;
                         option.textContent = slot.label;
                         
-                        // Fix: Compare times properly (strip seconds)
-                        const bookedTimes = data.bookedSlots.map(time => time.slice(0, 5));
-                        if (bookedTimes.includes(slot.value)) {
+                        // Check if this time is booked
+                        if (data.bookedSlots.includes(slot.value)) {
                             option.disabled = true;
                             option.textContent += ' (Booked)';
+                            option.style.color = '#999';
                         }
                         
                         timeSelect.appendChild(option);

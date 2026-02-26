@@ -15,7 +15,7 @@
 
             <form method="post" action="/adminCreateBooking">
                 
-                <pre>Hi <%= name %></pre><br><label><strong>Select Patient:</strong></label>
+                <br><label><strong>Select Patient:</strong></label>
                 
                 <select name="user_id" required>
                     <option value="" disabled selected>--Select Patient--</option>
@@ -27,7 +27,7 @@
                 </select><br><br>
                 
                 <label><strong>Appointment Date:</strong></label>
-                <input type="text" name="date" id="dateInput" placeholder="Select Date" required readonly /><br><br>
+                <input type="text" name="date" id="dateInput" placeholder="Select Date" required readonly />
                 
                 <label><strong>Appointment Time:</strong></label>
                 <select name="time" id="timeSelect" required>
@@ -40,9 +40,9 @@
                 </select><br><br>
 
                 <label><strong>Notes (Optional):</strong></label><br>
-                <textarea name="notes" rows="3" placeholder="Requirements"></textarea><br><br>
+                <textarea name="notes" rows="3" cols="50" placeholder="Requirements"></textarea><br><br>
 
-                <button type="submit">Book Appointment</button>
+                <button type="submit"><strong>Book Appointment</strong></button>
             </form>
             <p id="bookingSuccess" style="color: green; display: none">Booking submitted successfully!</p>      
         </div>

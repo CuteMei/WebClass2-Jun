@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <title>Edit Booking</title>
+        <%- include('partials/header1.ejs') %>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    </head>
+    <body>
+        <%- include('partials/navbarAdmin.ejs') %>
+        <div class="container"><br>
+            <h1><strong>Edit Booking</strong></h1><br>
+            
+            <form method="post" action="/updateBooking">
+                <input type="hidden" name="bookingId" value="<%= booking.booking_id %>" />
+                
+                <label><strong>Patient Name:</strong></label>
+                <select name="user_id" required>
+                    <% users.forEach(function(user) { %>
+                        <option value="<%= user.user_id %>" 
+                            <%= booking.user_id == user.user_id ? 'selected' : '' %>>
+                            <%= user.name %> (<%= user.email %>)
+                        </option>
+                    <% }); %>
+                </select><br><br>
+                
+                <label><strong>Date:</strong></label>
+                <input type="text" name="date" id="dateInput" 
+                       value="<%= booking.date.toISOString().split('T')[0] %>" 
+                       required readonly />
+                
+                <label><strong>Time:</strong></label>
+                <select name="time" id="timeSelect" required>
+                    <option value="09:30" <%= booking.time.slice(0,5) == '09:30' ? 'selected' : '' %>>09:30</option>
+                    <option value="11:00" <%= booking.time.slice(0,5) == '11:00' ? 'selected' : '' %>>11:00</option>
+                    <option value="13:00" <%= booking.time.slice(0,5) == '13:00' ? 'selected' : '' %>>13:00</option>
+                    <option value="14:30" <%= booking.time.slice(0,5) == '14:30' ? 'selected' : '' %>>14:30</option>
+                    <option value="16:00" <%= booking.time.slice(0,5) == '16:00' ? 'selected' : '' %>>16:00</option>
+                </select><br><br>
+                
+                <label><strong>Notes:</strong></label><br>
+                <textarea name="notes" rows="3" cols="50" placeholder="Requirements"><%= booking.notes || '' %></textarea><br><br>
+                
+                <button type="submit"><strong>Update Booking</strong></button>
+                <a href="/allBookings"><button type="submit1"><strong>Cancel</strong></button></a>
+            </form>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script>
+            const minDate = new Date();
+            minDate.setHours(minDate.getHours() + 48);
+            const maxDate = new Date();
+            maxDate.setDate(maxDate.getDate() + 30);
+
+            flatpickr('#dateInput', {
+                minDate: minDate,
+                maxDate: maxDate,
+                disable: [
+                    function(date) {
+                        return [0, 3, 6].includes(date.getDay());
+                    }
+                ],
+                dateFormat: 'Y-m-d'
+            });
+        </script>
+    </body>
+    <footer>
+        <p>&copy; 2026 Jun Healthcare House. All rights reserved.</p>
+    </footer>
+</html>

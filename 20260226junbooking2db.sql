@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Generation Time: Feb 19, 2026 at 07:44 AM
+-- Generation Time: Feb 26, 2026 at 10:19 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,11 +42,12 @@ CREATE TABLE `booking` (
 --
 
 INSERT INTO `booking` (`booking_id`, `user_id`, `date`, `time`, `notes`, `created_at`, `updated_at`) VALUES
-(260001, 2, '2026-04-10', '09:30:00', 'First visit - consultation', '2026-02-14 04:14:10', '2026-02-14 04:18:50'),
-(260002, 2, '2026-04-15', '14:30:00', 'Follow-up treatment', '2026-02-14 04:14:10', '2026-02-14 04:19:05'),
 (260003, 3, '2026-04-12', '11:00:00', 'Back pain treatment', '2026-02-14 04:14:10', '2026-02-14 04:18:35'),
 (260021, 10, '2026-02-26', '13:00:00', 'strsgr', '2026-02-18 06:39:43', '2026-02-18 06:39:43'),
-(260022, 4, '2026-02-20', '16:00:00', 'sdbfb', '2026-02-18 06:41:19', '2026-02-18 06:41:19');
+(260022, 4, '2026-02-20', '16:00:00', 'sdbfb', '2026-02-18 06:41:19', '2026-02-18 06:41:19'),
+(260027, 2, '2026-03-24', '11:00:00', 'sfhfdjfg', '2026-02-25 05:37:15', '2026-02-25 05:37:15'),
+(260028, 4, '2026-02-27', '09:30:00', 'zz   cvbxthr', '2026-02-25 08:38:37', '2026-02-25 08:38:37'),
+(260029, 11, '2026-03-09', '16:00:00', 'dsdggsfgfsggs', '2026-02-26 07:37:42', '2026-02-26 07:38:33');
 
 -- --------------------------------------------------------
 
@@ -100,7 +101,10 @@ INSERT INTO `users` (`user_id`, `name`, `phone_number`, `email`, `password`, `cr
 (2, 'test1', '0211234567', 'test1@gmail.com', '$2b$10$.dXlkTZDJozIOg.Qu27jC.JeAUpDt.C.1ehcmaRRd44GYjXh7gqwy', '2026-02-13 02:53:10', '2026-02-13 03:14:00', ''),
 (3, 'test3', '11113324', 'test3@gmail.com', '$2b$10$m4uvhY1nTpaL9qIxbiHuwO2iH4C7aeGQgRDQp9XtgdMT6tDpt4Swi', '2026-02-14 03:25:35', '2026-02-14 03:25:35', ''),
 (4, 'test2', '21424354363', 'test2@gmail.com', '$2b$10$otXcTHXWpQXO/8j7/vzSiu78v6jUoMgvWTBMFKH57fthgCNf6m6OG', '2026-02-15 08:20:38', '2026-02-15 08:20:38', ''),
-(10, 'test5', '2546457', 'test5@gmail.com', '$2b$10$sFywPJiT1MnKSPF5KxAh6e9g2evTIdg4uf4eDkqv0qqsHeAzK5Ffy', '2026-02-18 06:38:56', '2026-02-18 06:38:56', '');
+(10, 'test5', '2546457', 'test5@gmail.com', '$2b$10$sFywPJiT1MnKSPF5KxAh6e9g2evTIdg4uf4eDkqv0qqsHeAzK5Ffy', '2026-02-18 06:38:56', '2026-02-18 06:38:56', ''),
+(11, 'Chang', '', '', '1357', '2026-02-22 09:12:03', '2026-02-22 09:12:03', ''),
+(12, 'May', '', 'may@sfdf', '$2b$10$mZTsCrdIY5E06PvY32c13e4cpJ.XFs4xxmKA50.bVAITCm1dgTfz2', '2026-02-23 09:12:00', '2026-02-23 09:12:00', ''),
+(13, 'Changgong Hu', '125326574658', 'chang@hotmail', '$2b$10$dBz.inn/1OVwsUh00JlGOe.6krfoiZX0LrrHbr5JA0YmEddyO2NGi', '2026-02-26 08:09:35', '2026-02-26 08:09:35', '');
 
 --
 -- Indexes for dumped tables
@@ -134,7 +138,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=260023;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=260030;
 
 --
 -- AUTO_INCREMENT for table `faqs`
@@ -146,7 +150,7 @@ ALTER TABLE `faqs`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables

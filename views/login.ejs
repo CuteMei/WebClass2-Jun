@@ -10,18 +10,18 @@
 
             <!-- ADD THESE MESSAGE BLOCKS! -->
             <% if (typeof error !== 'undefined' && error) { %>
-                <p style="color: red; font-weight: bold;">⚠️ <%= error %></p>
+                <p style="color: red; font-weight: bold;"> <%= error %></p>
             <% } %>
 
             <% if (typeof success !== 'undefined' && success) { %>
-                <p style="color: green; font-weight: bold;">✅ <%= success %></p>
+                <p style="color: green; font-weight: bold;"> <%= success %></p>
             <% } %>
             <!-- END OF MESSAGE BLOCKS -->
 
             <form action="/auth" method="post">
                 <input type="email" name="email" placeholder="Enter Email" required />
                 <input type="password" name="password" placeholder="Enter Password" required/>
-                <button type="submit">Login</button>
+                <button type="submit"><strong>Login</strong></button>
             </form>
             <p><b>Don't have an account?</b> Go to <a href="register">Register</a> first please?<br><br>
                 <b>Forgot your password?</b> Contact us at <a href="mailto:JunHealthcareHouse@gmail.com">

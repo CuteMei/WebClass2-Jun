@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <title>Edit User</title>
+        <%- include('partials/header1.ejs') %>
+    </head>
+    <body>
+        <%- include('partials/navbarAdmin.ejs') %>
+        <div class="container"><br>
+            <h2><strong>Edit User Information</strong></h2>
+            
+            <% if (error) { %>
+                <p style="color: red;"><%= error %></p>
+            <% } %>
+            
+            <form method="post" action="/updateUser">
+                <input type="hidden" name="userId" value="<%= user.user_id %>" />
+                
+                <label><strong>Full Name:</strong></label><br>
+                <input type="text" name="name" value="<%= user.name %>" required /><br><br>
+                
+                <label><strong>Email:</strong></label><br>
+                <input type="email" name="email" value="<%= user.email %>" required /><br><br>
+                
+                <label><strong>Phone Number:</strong></label><br>
+                <input type="tel" name="phone_number" value="<%= user.phone_number %>" required /><br><br>
+                
+                <button type="submit">Update User</button>
+                <a href="/allUsers"><button type="button">Cancel</button></a>
+            </form>
+        </div>
+    </body>
+    <footer>
+        <p>&copy; 2026 Jun Healthcare House. All rights reserved.</p>
+    </footer>
+</html>

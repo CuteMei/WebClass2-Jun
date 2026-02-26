@@ -6,37 +6,53 @@
     <body>
         <%- include('partials/navbarUser.ejs') %>
         <div class="container">
-            <br><h1><strong>My Bookings</strong></h1>
-            <% if (bookingData.length == 0) { %>
-                <p>No bookings yet.</p>
-            <% } else { %>
-            <table>
-                <tr>
-                    <th>No.:_</th><th>Name:___</th><th>Email:______________</th>
-                    <th>Phone Number:___</th><th>Date:_____________</th><th>Time:___</th>
-                    <th></th>
-                </tr>
+            <br><h1><strong>My Bookings</strong></h1><br>
 
-                <% let i = 1;
-                    bookingData.forEach(function(data) { %>
+            <% if (bookingData.length == 0) { %>
+                <p>You have no bookings yet.</p>
+            <% } else { %>
+
+            <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+                <thead style="background-color: #f0f0f0;">
                 <tr>
-                    <td><%- i++ %></td>
-                    <td><%= data.user_id %></td>
+                    <th>No.</th>
+                    <th>User ID</th>
+                    <th>Booking ID</th>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Notes</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% let i = 1; %>
+                <% bookingData.forEach(function(data) { %>
+                <tr>
+                    <td style="text-align: center;"><%= i++ %></td>
+                    <td style="text-align: center;"><%= data.user_id %></td>
+                    <td style="text-align: center;"><%= data.booking_id %></td>
                     <td><%- data.name %></td>
-                    <td><%- data.email %></td>
                     <td><%- data.phone_number %></td>
                     <td><%- data.date ? data.date.toDateString() : "N/A" %></td>
-                    <td><%- data.time ? data.time.slice(0, 5) : "N/A" %></td>
-                    <td>
-                        <form method="post">
-                            <input type="hidden" name="bookingId" value="<%- data.id %>" />
-                            <button type="submit">Remove</button>
+                    <td style="text-align: center;"><%= data.time ? data.time.slice(0, 5) : "N/A" %></td>
+                    <td><%= data.notes || "N/A" %></td>
+                    <td style="text-align: center;">
+                        <form method="post" action="/deleteMyBooking" style="display:inline;">
+                            <input type="hidden" name="bookingId" value="<%= data.booking_id %>" />
+                            <button type="submit1" 
+                                    onclick="return confirm('Are you sure you want to cancel this booking?');"
+                                    style="padding: 5px 15px;">
+                                <strong>Cancel</strong>
+                            </button>
                         </form>
                     </td>
                 </tr>
                 <% }) %>
-            </table>
-            <% } %>
+            </tbody>
+        </table>
+        <% } %>
         </div>
     </body><br><br><br>
     <footer>

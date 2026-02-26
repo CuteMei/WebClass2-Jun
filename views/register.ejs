@@ -10,11 +10,11 @@
 
             <!-- ADD THESE MESSAGE BLOCKS! -->
             <% if (typeof error !== 'undefined' && error) { %>
-                <p style="color: red; font-weight: bold;">⚠️ <%= error %></p>
+                <p style="color: red; font-weight: bold;"> <%= error %></p>
             <% } %>
 
             <% if (typeof success !== 'undefined' && success) { %>
-                <p style="color: green; font-weight: bold;">✅ <%= success %></p>
+                <p style="color: green; font-weight: bold;"> <%= success %></p>
             <% } %>
             <!-- END OF MESSAGE BLOCKS -->
 
@@ -23,8 +23,8 @@
                 <input type="tel" name="phone_number" placeholder="Enter Phone Number" required />
                 <input type="email" name="email" placeholder="Enter Email" required /><br><br>
                 <input type="password" name="password" placeholder="Enter Password" required />
-                <input type="password" name="passwordVerify" placeholder="Confirm Password" required /><br><br>
-                <button type="submit">Register</button>
+                <input type="password" name="passwordVerify" placeholder="Confirm Password" required />
+                <button type="submit"><strong>Register</strong></button>
             </form> 
             <p><b>Already have an account?</b> Go to <a href="login">Login</a> please.</p>           
         </div>
