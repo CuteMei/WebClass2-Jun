@@ -13,7 +13,7 @@
             <% } else { %>
             
             <a href="/adminCreateUser">
-                <button type="button"><strong>+ Create New User</strong></button>
+                <button type="button" class="btn-success"><strong>+ Create New User</strong></button>
             </a><br><br>
      
             <table>
@@ -34,8 +34,8 @@
                     <td><%= data.phone_number %></td>
                     <td><%= data.email %></td>
                     <td>
-                        <a href="/editUser?userId=<%= data.user_id %>">
-                            <button type="button">Edit</button>
+                        <a href="/adminEditUser?userId=<%= data.user_id %>">
+                            <button type="submit" class="btn-primary"><strong>Edit</strong></button>
                         </a>
                     </td>
                 </tr>                    

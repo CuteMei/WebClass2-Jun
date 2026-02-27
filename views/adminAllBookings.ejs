@@ -12,15 +12,15 @@
                 <input type="text" name="search" placeholder="Search by name, email, or date..." 
                         value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>" 
                         style="width: 300px; padding: 5px;" />
-                <button type="submit"><strong>Search</strong></button>
+                <button type="submit" class="btn-success"><strong>Search</strong></button>
                 <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>
-                    <a href="/allBookings"><button type="button"><strong>Clear Search</strong></button></a>
+                    <a href="/adminAllBookings"><button type="button" class="btn-danger"><strong>Clear Search</strong></button></a>
                     <span style="margin-left: 10px;">Found: <%= bookingData.length %> results</span>
                 <% } %>
-            </form>
-            <% if (bookingData.length == 0) { %>
-                <p>No bookings yet.</p>
-            <% } else { %>
+                </form>
+                <% if (bookingData.length == 0) { %>
+                    <p>No bookings yet.</p>
+                <% } else { %>
 
             <table>
                 <tr>
@@ -43,11 +43,11 @@
                     
                     
                     <td>
-                        <a href="/editBooking?bookingId=<%= data.booking_id %>">
-                            <button type="submit"><strong>Edit</strong></button></a>
+                        <a href="/adminEditBooking?bookingId=<%= data.booking_id %>">
+                            <button type="submit" class="btn-primary"><strong>Edit</strong></button></a>
                         <form method="post" action="/adminDeleteBooking" style="display: inline;">
                             <input type="hidden" name="bookingId" value="<%= data.booking_id %>" />
-                            <button type="submit1" onclick="return confirm('Delete this booking?')"><strong>Cancel</strong></button>
+                            <button type="submit" onclick="return confirm('Delete this booking?')" class="btn-danger"><strong>Cancel</strong></button>
                         </form>
                     </td>
                 </tr>

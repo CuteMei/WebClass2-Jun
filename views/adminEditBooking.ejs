@@ -9,7 +9,7 @@
         <div class="container"><br>
             <h1><strong>Edit Booking</strong></h1><br>
             
-            <form method="post" action="/updateBooking">
+            <form method="post" action="/adminUpdateBooking">
                 <input type="hidden" name="bookingId" value="<%= booking.booking_id %>" />
                 
                 <label><strong>Patient Name:</strong></label>
@@ -39,8 +39,8 @@
                 <label><strong>Notes:</strong></label><br>
                 <textarea name="notes" rows="3" cols="50" placeholder="Requirements"><%= booking.notes || '' %></textarea><br><br>
                 
-                <button type="submit"><strong>Update Booking</strong></button>
-                <a href="/allBookings"><button type="submit1"><strong>Cancel</strong></button></a>
+                <button type="submit" class="btn-success"><strong>Update Booking</strong></button>
+                <a href="/adminAllBookings"><button type="button" class="btn-danger"><strong>Cancel</strong></button></a>
             </form>
         </div>
         

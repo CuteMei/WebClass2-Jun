@@ -6,26 +6,27 @@
     <body>
         <%- include('partials/navbarAdmin.ejs') %>
         <div class="container"><br>
-            <h2><strong>Edit User Information</strong></h2>
+            <h1><strong>Edit User Information</strong></h1>
             
             <% if (error) { %>
                 <p style="color: red;"><%= error %></p>
             <% } %>
             
-            <form method="post" action="/updateUser">
+            <form method="post" action="/adminUpdateUser">
                 <input type="hidden" name="userId" value="<%= user.user_id %>" />
                 
-                <label><strong>Full Name:</strong></label><br>
+                <label><strong>Full Name:</strong></label>
                 <input type="text" name="name" value="<%= user.name %>" required /><br><br>
                 
-                <label><strong>Email:</strong></label><br>
-                <input type="email" name="email" value="<%= user.email %>" required /><br><br>
+                <label><strong>Email:</strong></label>
+                <input type="email" name="email" value="<%= user.email %>" required />
                 
-                <label><strong>Phone Number:</strong></label><br>
+                <label><strong>Phone Number:</strong></label>
                 <input type="tel" name="phone_number" value="<%= user.phone_number %>" required /><br><br>
                 
-                <button type="submit">Update User</button>
-                <a href="/allUsers"><button type="button">Cancel</button></a>
+                <button type="submit" class="btn-success"><strong>Update User</strong></button>
+                <a href="/adminAllUsers"><button type="button" class="btn-danger"><strong>Cancel</strong></button></a>
+                
             </form>
         </div>
     </body>

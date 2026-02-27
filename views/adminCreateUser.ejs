@@ -17,16 +17,18 @@
                 <input type="text" name="name" required /><br><br>
                 
                 <label><strong>Email:</strong></label>
-                <input type="email" name="email" required /><br><br>
+                <input type="email" name="email" required />
                 
                 <label><strong>Phone Number:</strong></label>
                 <input type="tel" name="phone_number" required /><br><br>
                 
-                <p><em>Default password: Welcome123</em></p>
-                <p><em>User can change password after first login</em></p>
-                
-                <button type="submit">Create User</button>
-                <a href="/allUsers"><button type="button">Cancel</button></a>
+                <p style="background-color: #fffacd; padding: 10px; width: 50%; border-radius: 5px;">
+                <em><strong>Default password:</strong> Welcome123</em><br>
+                <em>User can change password after first login</em>
+                </p>
+
+                <button type="submit" class="btn-success"><strong>Create User</strong></button>
+                <a href="/adminAllUsers"><button type="button" class="btn-danger"><strong>Cancel</strong></button></a>
             </form>
         </div>
     </body>

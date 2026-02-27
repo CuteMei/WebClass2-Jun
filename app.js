@@ -6,7 +6,7 @@ var conn = require('./dbConfig');
 var bcrypt = require('bcrypt');
 
 app.set('view engine','ejs');
-app.use(session({
+app.use(session({ // Session configuration
     secret: 'jHh2026SecureRandomString!@#', // Use a strong, random secret in production
     resave: true,
     saveUninitialized: true
@@ -20,29 +20,30 @@ app.get('/', function(req, res){ // Home page
     res.render("home");
 });
 
-app.get('/service', function(req, res){ // Service page
-    res.render("service");
+app.get('/hService', function(req, res){ // Service page
+    res.render("hService");
 });
 
-// FAQs page - static version for comparison
-// Static FAQs version for comparison
-app.get('/faqs1', function(req, res){ 
-    res.render("faqs1");
-});
-
-// FAQs page - database-driven version
-app.get('/faqs', function(req, res) { 
+app.get('/hFaqs', function(req, res) { // FAQs page - database-driven version
     conn.query('SELECT * FROM faqs ORDER BY faq_id', function(err, results) {
         if (err) {
             console.error('Error fetching FAQs:', err);
-            return res.render('faqs', { faqData: [] }); // Render with empty data on error
+            return res.render('hFaqs', { faqData: [] }); // Render with empty data on error
         }
-        res.render('faqs', { faqData: results });
+        res.render('hFaqs', { faqData: results });
     });
 });
 
-//Registration Route - Improced with validation and error handling
-app.get('/register', function(req, res) {
+app.get('/faqs1', function(req, res){ // FAQs page - static version for comparison
+    res.render("faqs1");
+});
+
+app.get('/logout', (req,res) => { // Logout route
+    req.session.destroy();
+    res.redirect('/');
+});
+
+app.get('/register', function(req, res) { //Registration Route
     res.render("register", {
         error: null,
         success: null }); // Pass null for error and success on initial load
@@ -82,7 +83,7 @@ app.post('/register', function (req, res) {
                 });
             }
     
-            // 7. HASH PASSWORD & INSERT USER
+            // HASH PASSWORD & INSERT USER
             const hashedPassword = bcrypt.hashSync(password, 10);
 
             conn.query( 
@@ -151,25 +152,22 @@ app.post('/auth', async function(req, res) { //added async
             }
         });
 })  
-
-// Reusable middleware for requires login 
-function requireLogin(req, res, next) {
+ 
+function requireLogin(req, res, next) { // Reusable middleware for requires login
     if (req.session.loggedin) {
         next(); // logged in, continue
     } else { // Redirect to login page if not logged in
         res.redirect('/login');    
 }}
 
-//For user logged in. Apply requireLogin to both GET and POST
-app.get('/userPage', requireLogin, function (req, res) {
-    res.render('userPage', { 
-        name: req.session.name, 
-        phone: req.session.phone_number || '', // Handle case where phone_number might be null
-        user_id: req.session.user_id, // Pass user_id to userPage for booking form
-    });
-});
+function requireAdmin(req, res, next) { // Reusable middleware for requires admin login
+    if (req.session.loggedin && req.session.role === 'admin') {
+        next(); // logged in and is admin, continue
+    } else { // Redirect to login page if not admin
+        res.redirect('/login'); 
+}}
 
-app.get('/available-slots', function(req, res) {
+app.get('/available-slots', function(req, res) { // to get booked slots for a given date
     const date = req.query.date;
     
     if (!date) {
@@ -197,7 +195,15 @@ app.get('/available-slots', function(req, res) {
     );
 });
 
-app.post('/userCreateBooking', requireLogin, function(req, res) {
+app.get('/userPage', requireLogin, function (req, res) { // User dashboard
+    res.render('userPage', { 
+        name: req.session.name, 
+        phone: req.session.phone_number || '', // Handle case where phone_number might be null
+        user_id: req.session.user_id, // Pass user_id to userPage for booking form
+    });
+});
+
+app.post('/userCreateBooking', requireLogin, function(req, res) { // booking creation from user dashboard
     const { date, time, notes } = req.body;
     const user_id = req.session.user_id;
     
@@ -231,15 +237,14 @@ app.post('/userCreateBooking', requireLogin, function(req, res) {
                         return res.send('Error creating booking');
                     }
                     console.log('Booking created successfully for user_id:', user_id, 'on', date, time);
-                    res.redirect('/myBookings');
+                    res.redirect('/userMyBookings');
                 }
             );
         }
     );
 });
 
-app.get('/myBookings', requireLogin, function (req, res, next) {
-    //Get only this user's bookings
+app.get('/userMyBookings', requireLogin, function (req, res, next) { //Get only this user's bookings
     conn.query(
         `SELECT b.date, b.time, b.notes, b.created_at,
             u.name, u.phone_number, u.email, b.booking_id, b.user_id
@@ -251,14 +256,14 @@ app.get('/myBookings', requireLogin, function (req, res, next) {
                 console.log('Error fetching bookings:', err);
                 return res.send('Error loading bookings');
             }
-        res.render('myBookings', { 
+        res.render('userMyBookings', { 
             bookingData: results,
             message: null, // No message on initial load
         });
     });
 });
 
-app.post('/userCreateBooking', requireLogin, function(req, res) {
+app.post('/userCreateBooking', requireLogin, function(req, res) { // booking creation from user dashboard
     const { date, time, notes } = req.body;
     const user_id = req.session.user_id;
     
@@ -280,9 +285,8 @@ app.post('/userCreateBooking', requireLogin, function(req, res) {
             if (results.length > 0) {
                 return res.send('This time slot is already booked! Please choose another time.');
             }
-            // Create booking if no double booking
-            conn.query(
-            // Don't specify created_at - let MySQL handle it!
+            
+            conn.query( // Create booking if no double booking
                 'INSERT INTO booking (user_id, date, time, notes) VALUES (?, ?, ?, ?)',
                 [user_id, date, time, notes],
                 function(err, result) {
@@ -290,12 +294,12 @@ app.post('/userCreateBooking', requireLogin, function(req, res) {
                         console.log('Error:', err);
                         return res.send('Error creating booking');
                     }
-                    res.redirect('/myBookings');
+                    res.redirect('/userMyBookings');
             });
     })
 });
 
-app.post('/deleteMyBooking', requireLogin, function(req, res) {
+app.post('/deleteMyBooking', requireLogin, function(req, res) { // User deletes their own booking
     const bookingId = req.body.bookingId;
     const userId = req.session.user_id;
     
@@ -313,20 +317,12 @@ app.post('/deleteMyBooking', requireLogin, function(req, res) {
                 return res.send('Booking not found or unauthorized');
             }
             
-            res.redirect('/myBookings');
+            res.redirect('/userMyBookings');
         }
     );
 });
-
-// Reusable middleware for requires admin login 
-function requireAdmin(req, res, next) {
-    if (req.session.loggedin && req.session.role === 'admin') {
-        next(); // logged in and is admin, continue
-    } else { // Redirect to login page if not admin
-        res.redirect('/login'); 
-}}
-
-app.get('/adminPage', requireAdmin, function(req, res) {
+ 
+app.get('/adminPage', requireAdmin, function(req, res) { // Admin dashboard - show all users
     conn.query(
         'SELECT user_id, name, email, phone_number FROM users WHERE role != "admin" ORDER BY name', 
         function(err, results) {
@@ -344,11 +340,10 @@ app.get('/adminPage', requireAdmin, function(req, res) {
     });
 });
 
-app.get('/editBooking', requireAdmin, function(req, res) {
+app.get('/adminEditBooking', requireAdmin, function(req, res) { // Admin edit booking page
     const bookingId = req.query.bookingId;
     
-    // Get the booking to edit
-    conn.query(
+    conn.query( // Get the booking to edit
         'SELECT * FROM booking WHERE booking_id = ?',
         [bookingId],
         function(err, bookingResults) {
@@ -356,15 +351,14 @@ app.get('/editBooking', requireAdmin, function(req, res) {
                 return res.send('Booking not found');
             }
             
-            // Get all users for dropdown
-            conn.query(
+            conn.query( // Get all users for dropdown
                 'SELECT user_id, name, email FROM users WHERE role != "admin" ORDER BY name',
                 function(err, userResults) {
                     if (err) {
                         return res.send('Error loading users');
                     }
                     
-                    res.render('editBooking', {
+                    res.render('adminEditBooking', {
                         booking: bookingResults[0],
                         users: userResults
                     });
@@ -374,7 +368,7 @@ app.get('/editBooking', requireAdmin, function(req, res) {
     );
 });
 
-app.post('/updateBooking', requireAdmin, function(req, res) {
+app.post('/adminUpdateBooking', requireAdmin, function(req, res) { // Admin updates a booking
     const { bookingId, user_id, date, time, notes } = req.body;
     
     // Check for conflicts (excluding this booking)
@@ -400,14 +394,14 @@ app.post('/updateBooking', requireAdmin, function(req, res) {
                         console.log('Error updating:', err);
                         return res.send('Error updating booking');
                     }
-                    res.redirect('/allBookings');
+                    res.redirect('/adminAllBookings');
                 }
             );
         }
     );
 });
 
-app.post('/adminDeleteBooking', requireAdmin, function(req, res) {
+app.post('/adminDeleteBooking', requireAdmin, function(req, res) { // Admin deletes a booking
     const bookingId = req.body.bookingId;
     
     conn.query(
@@ -418,12 +412,12 @@ app.post('/adminDeleteBooking', requireAdmin, function(req, res) {
                 console.log('Error deleting booking:', err);
                 return res.send('Error deleting booking');
             }
-            res.redirect('/allBookings');
+            res.redirect('/adminAllBookings');
         }
     );
 });
 
-app.post('/adminCreateBooking', requireAdmin, async function(req, res) {
+app.post('/adminCreateBooking', requireAdmin, async function(req, res) { // Admin creates a booking for any user
     const { user_id, date, time, notes } = req.body;
     
     // Validation
@@ -454,12 +448,12 @@ app.post('/adminCreateBooking', requireAdmin, async function(req, res) {
                             return res.send('Error creating booking');
                         }
                         console.log('Booking created successfully');
-                        res.redirect('/allBookings');
+                        res.redirect('/adminAllBookings');
                 });
         });
 });
 
-app.get('/searchBookings', requireAdmin, function(req, res) {
+app.get('/searchBookings', requireAdmin, function(req, res) { // Admin search bookings by user name, email, or date
     const searchTerm = req.query.search || '';
     
     if (!searchTerm) {
@@ -480,7 +474,7 @@ app.get('/searchBookings', requireAdmin, function(req, res) {
                 return res.send('Error searching bookings');
             }
             
-            res.render('allBookings', {
+            res.render('adminAllBookings', {
                 bookingData: results,
                 searchTerm: searchTerm
             });
@@ -488,7 +482,7 @@ app.get('/searchBookings', requireAdmin, function(req, res) {
     );
 });
 
-app.get('/allBookings', requireAdmin, function(req, res) {
+app.get('/adminAllBookings', requireAdmin, function(req, res) { // Admin view all bookings - only current and future bookings
     conn.query(
         `SELECT b.booking_id, b.date, b.time, b.notes, b.created_at, 
             u.user_id, u.name, u.phone_number, u.email
@@ -500,7 +494,7 @@ app.get('/allBookings', requireAdmin, function(req, res) {
                 console.log('Error fetching bookings:', err);
                 return res.send('Error loading bookings');
             }
-            res.render('allBookings', { 
+            res.render('adminAllBookings', { 
                 bookingData: results,
                 searchTerm: null // No search term on initial load
             });
@@ -508,11 +502,11 @@ app.get('/allBookings', requireAdmin, function(req, res) {
     );
 });
 
-app.get('/adminCreateUser', requireAdmin, function(req, res) {
+app.get('/adminCreateUser', requireAdmin, function(req, res) { // Admin page to create a new user with default password
     res.render('adminCreateUser', { error: null });
 });
 
-app.post('/adminRegisterUser', requireAdmin, function(req, res) {
+app.post('/adminRegisterUser', requireAdmin, function(req, res) { // Admin creates a new user with default password
     const { name, email, phone_number } = req.body;
     const defaultPassword = 'Welcome123';
     
@@ -534,12 +528,12 @@ app.post('/adminRegisterUser', requireAdmin, function(req, res) {
                     error: 'Error creating user' 
                 });
             }
-            res.redirect('/allUsers');
+            res.redirect('/adminAllUsers');
         }
     );
 });
 
-app.get('/allUsers', requireAdmin, function(req, res) {
+app.get('/adminAllUsers', requireAdmin, function(req, res) { // Admin view all users - for editing and deleting users
     conn.query(
         'SELECT user_id, name, phone_number, email FROM users WHERE role != "admin" ORDER BY name',
         function(err, results) {
@@ -550,14 +544,14 @@ app.get('/allUsers', requireAdmin, function(req, res) {
                 return res.send('Error loading users');
             }
             
-            res.render('allUsers', {
+            res.render('adminAllUsers', {
                 contactsData: results
             });
         }
     );
 });
 
-app.get('/editUser', requireAdmin, function(req, res) {
+app.get('/adminEditUser', requireAdmin, function(req, res) { // Admin edit user page - for updating user info (except password)
     const userId = req.query.userId;
     
     conn.query(
@@ -567,7 +561,7 @@ app.get('/editUser', requireAdmin, function(req, res) {
             if (err || results.length === 0) {
                 return res.send('User not found');
             }
-            res.render('editUser', {
+            res.render('adminEditUser', {
                 user: results[0],
                 error: null
             });
@@ -575,7 +569,7 @@ app.get('/editUser', requireAdmin, function(req, res) {
     );
 });
 
-app.post('/updateUser', requireAdmin, function(req, res) {
+app.post('/adminUpdateUser', requireAdmin, function(req, res) { // Admin updates user info (except password)
     const { userId, name, email, phone_number } = req.body;
     
     conn.query(
@@ -585,7 +579,7 @@ app.post('/updateUser', requireAdmin, function(req, res) {
             if (err) {
                 if (err.code === 'ER_DUP_ENTRY') {
                     conn.query('SELECT * FROM users WHERE user_id = ?', [userId], function(err2, results) {
-                        return res.render('editUser', {
+                        return res.render('adminEditUser', {
                             user: results[0],
                             error: 'Email already in use by another user!'
                         });
@@ -594,15 +588,10 @@ app.post('/updateUser', requireAdmin, function(req, res) {
                     return res.send('Error updating user');
                 }
             } else {
-                res.redirect('/allUsers');
+                res.redirect('/adminAllUsers');
             }
         }
     );
-});
-
-app.get('/logout', (req,res) => {
-    req.session.destroy();
-    res.redirect('/');
 });
 
 app.listen(3000);
