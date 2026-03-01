@@ -6,7 +6,7 @@
     <body>
         <%- include('partials/navbarPublic.ejs') %>
         <div class="container"><br>
-            <h1><strong>Register</strong></h1>
+            <h1><strong>Register</strong></h1><br>
 
             <!-- ADD THESE MESSAGE BLOCKS! -->
             <% if (typeof error !== 'undefined' && error) { %>
@@ -19,14 +19,19 @@
             <!-- END OF MESSAGE BLOCKS -->
 
             <form action="/register" method="post">
-                <input type="text" name="name" placeholder="Enter Name" required />
+                <label><strong>Full Name:</strong></label>
+                <input type="text" name="name" placeholder="Enter Name" required /><br><br>
+                <label><strong>Phone Number:</strong></label>
                 <input type="tel" name="phone_number" placeholder="Enter Phone Number" required />
+                <label><strong>Email:</strong></label>
                 <input type="email" name="email" placeholder="Enter Email" required /><br><br>
+                <label><strong>Your Password:</strong></label>
                 <input type="password" name="password" placeholder="Enter Password" required />
-                <input type="password" name="passwordVerify" placeholder="Confirm Password" required />
+                <label><strong>Confirm Password:</strong></label>
+                <input type="password" name="passwordVerify" placeholder="Confirm Password" required /><br><br>
                 <button type="submit" class="btn-success"><strong>Register</strong></button>
             </form> 
-            <p><b>Already have an account?</b> Go to <a href="login">Login</a> please.</p>           
+            <p>Already have an account? Go to <a href="login">Login</a> please.</p>           
         </div>
     </body>
     <footer>

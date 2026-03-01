@@ -2,12 +2,11 @@ var express = require('express');
 var app = express();
 var session = require('express-session');
 var conn = require('./dbConfig');
-//const { title } = require('process');
 var bcrypt = require('bcrypt');
 
 app.set('view engine','ejs');
 app.use(session({ // Session configuration
-    secret: 'jHh2026SecureRandomString!@#', // Use a strong, random secret in production
+    secret: 'jHh2026SecureRandomString!@#', 
     resave: true,
     saveUninitialized: true
 }));
@@ -28,7 +27,7 @@ app.get('/hFaqs', function(req, res) { // FAQs page - database-driven version
     conn.query('SELECT * FROM faqs ORDER BY faq_id', function(err, results) {
         if (err) {
             console.error('Error fetching FAQs:', err);
-            return res.render('hFaqs', { faqData: [] }); // Render with empty data on error
+            return res.render('hFaqs', { faqData: [] }); 
         }
         res.render('hFaqs', { faqData: results });
     });
@@ -38,12 +37,12 @@ app.get('/faqs1', function(req, res){ // FAQs page - static version for comparis
     res.render("faqs1");
 });
 
-app.get('/logout', (req,res) => { // Logout route
+app.get('/logout', (req,res) => { 
     req.session.destroy();
     res.redirect('/');
 });
 
-app.get('/register', function(req, res) { //Registration Route
+app.get('/register', function(req, res) { //Register page
     res.render("register", {
         error: null,
         success: null }); // Pass null for error and success on initial load
@@ -112,8 +111,6 @@ app.get('/login', function(req, res) { // Login page
 
 app.post('/auth', async function(req, res) { //added async
     let { email, password} = req.body;
-    //var email = req.body.email;
-    //var password = req.body.password;
     
     // validation for empty fields
     if (!email || !password) {

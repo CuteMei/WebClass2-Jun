@@ -61,7 +61,7 @@
                 disable: [
                     function(date) {
                         // Block Wednesday (3), Saturday (6), Sunday (0)
-                        return [0, 3, 4, 6].includes(date.getDay());
+                        return [0, 3, 6].includes(date.getDay());
                     }
                 ],
                 dateFormat: 'Y-m-d',

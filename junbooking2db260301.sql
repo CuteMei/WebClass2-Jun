@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Generation Time: Feb 26, 2026 at 10:19 AM
+-- Generation Time: Mar 01, 2026 at 09:32 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,12 +42,14 @@ CREATE TABLE `booking` (
 --
 
 INSERT INTO `booking` (`booking_id`, `user_id`, `date`, `time`, `notes`, `created_at`, `updated_at`) VALUES
-(260003, 3, '2026-04-12', '11:00:00', 'Back pain treatment', '2026-02-14 04:14:10', '2026-02-14 04:18:35'),
-(260021, 10, '2026-02-26', '13:00:00', 'strsgr', '2026-02-18 06:39:43', '2026-02-18 06:39:43'),
-(260022, 4, '2026-02-20', '16:00:00', 'sdbfb', '2026-02-18 06:41:19', '2026-02-18 06:41:19'),
-(260027, 2, '2026-03-24', '11:00:00', 'sfhfdjfg', '2026-02-25 05:37:15', '2026-02-25 05:37:15'),
-(260028, 4, '2026-02-27', '09:30:00', 'zz   cvbxthr', '2026-02-25 08:38:37', '2026-02-25 08:38:37'),
-(260029, 11, '2026-03-09', '16:00:00', 'dsdggsfgfsggs', '2026-02-26 07:37:42', '2026-02-26 07:38:33');
+(260001, 2, '2026-03-09', '09:30:00', 'First visit - back pain', '2026-02-27 02:38:16', '2026-02-27 02:38:16'),
+(260002, 2, '2026-03-13', '09:30:00', 'Follow-up treatment', '2026-02-27 02:44:51', '2026-02-27 02:44:51'),
+(260003, 2, '2026-03-17', '13:00:00', 'Follow-up treatment', '2026-02-27 04:36:34', '2026-02-27 04:36:34'),
+(260005, 2, '2026-03-16', '14:30:00', 'First visit - shoulder pain', '2026-02-27 06:13:01', '2026-02-27 08:40:44'),
+(260006, 4, '2026-03-17', '16:00:00', 'Monthly maintenance', '2026-02-27 06:18:25', '2026-02-27 06:18:25'),
+(260007, 5, '2026-03-17', '09:30:00', 'Stress relief', '2026-02-27 06:22:58', '2026-02-27 06:22:58'),
+(260009, 6, '2026-03-17', '11:00:00', 'First visit - back pain', '2026-02-27 07:16:53', '2026-02-27 07:16:53'),
+(260010, 3, '2026-03-17', '14:30:00', 'Monthly Check', '2026-02-27 08:42:42', '2026-02-27 08:42:42');
 
 -- --------------------------------------------------------
 
@@ -97,14 +99,14 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `name`, `phone_number`, `email`, `password`, `created_at`, `updated_at`, `role`) VALUES
-(1, 'admin', '0271111111', 'admin@jhh.com', '$2b$10$6JOnWIVlBK93SVxIgK2oYOi1YRrkGBFfleg7dilMispmgbnExLePy', '2026-02-13 00:24:53', '2026-02-15 02:08:26', 'admin'),
-(2, 'test1', '0211234567', 'test1@gmail.com', '$2b$10$.dXlkTZDJozIOg.Qu27jC.JeAUpDt.C.1ehcmaRRd44GYjXh7gqwy', '2026-02-13 02:53:10', '2026-02-13 03:14:00', ''),
-(3, 'test3', '11113324', 'test3@gmail.com', '$2b$10$m4uvhY1nTpaL9qIxbiHuwO2iH4C7aeGQgRDQp9XtgdMT6tDpt4Swi', '2026-02-14 03:25:35', '2026-02-14 03:25:35', ''),
-(4, 'test2', '21424354363', 'test2@gmail.com', '$2b$10$otXcTHXWpQXO/8j7/vzSiu78v6jUoMgvWTBMFKH57fthgCNf6m6OG', '2026-02-15 08:20:38', '2026-02-15 08:20:38', ''),
-(10, 'test5', '2546457', 'test5@gmail.com', '$2b$10$sFywPJiT1MnKSPF5KxAh6e9g2evTIdg4uf4eDkqv0qqsHeAzK5Ffy', '2026-02-18 06:38:56', '2026-02-18 06:38:56', ''),
-(11, 'Chang', '', '', '1357', '2026-02-22 09:12:03', '2026-02-22 09:12:03', ''),
-(12, 'May', '', 'may@sfdf', '$2b$10$mZTsCrdIY5E06PvY32c13e4cpJ.XFs4xxmKA50.bVAITCm1dgTfz2', '2026-02-23 09:12:00', '2026-02-23 09:12:00', ''),
-(13, 'Changgong Hu', '125326574658', 'chang@hotmail', '$2b$10$dBz.inn/1OVwsUh00JlGOe.6krfoiZX0LrrHbr5JA0YmEddyO2NGi', '2026-02-26 08:09:35', '2026-02-26 08:09:35', '');
+(1, 'Jun Wu', '0211234567', 'admin@jhh.com', '$2b$10$NykCIItuCDTjpikcJw1Rneu9vsCF21G.aPBMO/O1OAhAlOiwUDq3e', '2026-02-27 02:04:07', '2026-02-27 02:21:21', 'admin'),
+(2, 'Mei Qiu', '027230888', 'mqiu@gmail.com', '$2b$10$QSn3STY9VwIlr23G8eu9Wux55zqxm66Ib2MVtCFC5V9p4tuj301WS', '2026-02-27 02:24:37', '2026-02-28 22:47:14', ''),
+(3, 'Sarah Chen', '0212345678', 'sarah.c@gmail.com', '$2b$10$.QOCDRMMOSa34WI5JQd7suluUtDIOO9Bp9ZBgwqwNDhSFImvNrf0q', '2026-02-27 04:57:53', '2026-02-27 04:57:53', ''),
+(4, 'Maria Garcia', '0223456789', 'maria.g@outlook.com', '$2b$10$jQVmfBPABUiMySafWGAkxO8JSOb2UUsYmPCfwteO5EoY7D3/tuv26', '2026-02-27 06:10:48', '2026-02-27 06:10:48', ''),
+(5, 'Emma Wilson', '0234567890', 'emma.w@yahoo.com', '$2b$10$owc3K.A1mzTG7y.judu6fugAMp8HFTk3cUuClM2Cc1X6EGg8DWtuG', '2026-02-27 06:21:28', '2026-02-27 06:21:28', ''),
+(6, 'Lisa Patel', '0245678901', 'lisa.p@gmail.com', '$2b$10$lXfGjcJO4mBRfnAYVBwP3uMBwe4uGrN07JhSKCOf2sC2eDYHntXMq', '2026-02-27 06:26:09', '2026-02-27 06:26:09', ''),
+(7, 'May Chen', '32543658', 'mc@hotmail.com', '$2b$10$DQQDRFvUD7Psu87cbgDnsOu8c3yLDlxVIVHN.urJq0KI3SSLfnkce', '2026-02-27 08:48:38', '2026-02-27 08:49:50', ''),
+(8, 'Jess Hu', '3474895736', 'jess@sgrtgdgd', '$2b$10$Ud1lA0nKHFJkvXwD.owOou8nDoT1CyuQl02kpMvj7rPZRbixvcdea', '2026-02-28 22:52:13', '2026-02-28 22:52:13', '');
 
 --
 -- Indexes for dumped tables
@@ -138,7 +140,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=260030;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=260011;
 
 --
 -- AUTO_INCREMENT for table `faqs`
@@ -150,7 +152,7 @@ ALTER TABLE `faqs`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
